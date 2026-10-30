@@ -1,0 +1,13 @@
+{
+  "name": "uber-eat-habits",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Extension Chrome pour retrouver les restaurants et les dernières commandes Uber Eats.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "chrome-store:dry-run": "node scripts/check-chrome-store-credentials.mjs",
+    "check": "node --check scripts/check-chrome-store-credentials.mjs"
+  }
+}

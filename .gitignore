@@ -1,0 +1,9 @@
+.codex/
+node_modules/
+coverage/
+dist/
+playwright-report/
+test-results/
+.env
+.env.*
+client_secret_*.json
