@@ -1,6 +1,6 @@
 {
   "name": "uber-eat-habits",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "Extension Chrome pour retrouver les restaurants et les dernières commandes Uber Eats.",
@@ -8,6 +8,9 @@
     "node": ">=24"
   },
   "scripts": {
+    "version": "node scripts/sync-version.mjs && prettier --write manifest.json",
+    "version:bump": "npm version patch --no-git-tag-version",
+    "version:check": "node scripts/check-version.mjs",
     "chrome-store:dry-run": "node scripts/check-chrome-store-credentials.mjs",
     "chrome-store:oauth-check": "node scripts/check-chrome-store-credentials.mjs --oauth-only",
     "check": "node --check scripts/check-chrome-store-credentials.mjs && node --check src/orders.js && node --check src/ui.js && node --check src/content.js && node scripts/check-extension.mjs",

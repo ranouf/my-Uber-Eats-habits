@@ -1,7 +1,7 @@
 (async () => {
   const { collectOrders, groupRestaurants } = await import(chrome.runtime.getURL("src/orders.js"));
   const { createPanel, renderRestaurants } = await import(chrome.runtime.getURL("src/ui.js"));
-  const { shadow } = createPanel();
+  const { shadow } = createPanel(chrome.runtime.getManifest().version);
   const launcher = shadow.querySelector(".launcher");
   const panel = shadow.querySelector(".panel");
   const close = shadow.querySelector(".close");

@@ -10,6 +10,12 @@ Après une mise à jour des fichiers, recharger **UberEatHabits** dans `chrome:/
 
 Le panneau reprend la police du site et ses surfaces noires, blanches et grises. Il regroupe les commandes chargées, permet de chercher un restaurant et se met à jour lorsque davantage de commandes sont affichées sur Uber Eats. Les articles sont un aperçu des éléments visibles ; chaque reçu donne accès au détail complet. Aucune donnée n'est enregistrée ou transmise. L'accès est limité au site `https://www.ubereats.com/*`. Aucun identifiant de publication n'est inclus dans l'extension.
 
+## Versionnement
+
+La version installée est affichée sur le bouton **Mes restaurants** et dans l'en-tête du panneau, à partir du manifeste Chrome.
+
+Avant chaque modification livrée, exécuter `npm run version:bump` pour incrémenter le correctif. Le cycle npm synchronise automatiquement `package.json`, `package-lock.json` et `manifest.json`. Le workflow de validation refuse une version qui n'est pas supérieure à celle du commit précédent. Les changements mineurs ou majeurs utilisent respectivement `npm version minor --no-git-tag-version` et `npm version major --no-git-tag-version`.
+
 ## Configuration de publication
 
 La démarche reprend celle de BNRI Évolution avec un projet Google Cloud, un client OAuth et un refresh token dédiés à UberEatHabits.

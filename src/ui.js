@@ -59,7 +59,7 @@ export function renderRestaurants(results, restaurants, query) {
   }
 }
 
-export function createPanel() {
+export function createPanel(version) {
   const host = element("div", "");
   host.id = "uber-eat-habits-extension";
   const shadow = host.attachShadow({ mode: "open" });
@@ -69,12 +69,12 @@ export function createPanel() {
   shadow.append(stylesheet);
   const content = element("div", "");
   content.innerHTML = `
-    <button class="launcher" type="button" aria-expanded="false" aria-controls="habits-panel">
-      <span aria-hidden="true">↺</span> Mes restaurants
+    <button class="launcher" type="button" aria-label="Mes restaurants" aria-expanded="false" aria-controls="habits-panel">
+      <span class="launcher-icon" aria-hidden="true">↺</span><span class="launcher-label">Mes restaurants<small class="version">v${version}</small></span>
     </button>
     <aside id="habits-panel" class="panel" aria-label="UberEatHabits — Mes restaurants" hidden>
       <header class="panel-header">
-        <div><span class="brand">UberEat<span>Habits</span></span><h2>Mes restaurants</h2></div>
+        <div><div class="brand-row"><span class="brand">UberEat<span>Habits</span></span><small class="version">v${version}</small></div><h2>Mes restaurants</h2></div>
         <button class="icon-button close" type="button" aria-label="Fermer le panneau">×</button>
       </header>
       <div class="panel-body">

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { chromium, expect, test } from "@playwright/test";
@@ -5,6 +6,7 @@ import { chromium, expect, test } from "@playwright/test";
 import { collectOrders, groupRestaurants } from "../src/orders.js";
 
 const root = path.resolve(".");
+const { version } = JSON.parse(readFileSync("manifest.json", "utf8"));
 const fixture = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <style>
 body { margin:0; font:16px Arial,sans-serif; color:#000; background:#fff; }
@@ -83,6 +85,7 @@ test("affiche les dernières commandes par restaurant et filtre la liste", async
     page.getByRole("complementary", { name: "UberEatHabits — Mes restaurants" }),
   ).toBeVisible();
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
+  await expect(page.locator(".panel .version")).toHaveText(`v${version}`);
   await expect(page.locator(".restaurant-name")).toHaveText(["La Cantine", "Maison Bangkok"]);
   await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
   await expect(page.locator("details[open] .order-date")).toHaveText([
@@ -105,6 +108,8 @@ test("ouvre le panneau depuis le site et guide vers l'historique", async () => {
   const page = await context.newPage();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("https://www.ubereats.com/feed");
+  await expect(page.locator(".launcher .version")).toHaveText(`v${version}`);
+  await page.locator(".launcher").screenshot({ path: ".codex/panel-launcher.png" });
   await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("Ouvrez votre historique");
   await expect(page.getByRole("link", { name: /Ouvrir mon historique/ })).toHaveAttribute(
