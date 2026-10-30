@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "UberEatHabits",
+  "version": "0.1.0",
+  "description": "Retrouvez votre historique de commandes Uber Eats.",
+  "content_scripts": [
+    {
+      "matches": ["https://www.ubereats.com/*"],
+      "js": ["src/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/orders.js", "src/ui.js", "src/panel.css"],
+      "matches": ["https://www.ubereats.com/*"]
+    }
+  ]
+}

@@ -1,6 +1,14 @@
 # UberEatHabits
 
-Extension Chrome en préparation pour retrouver les restaurants Uber Eats par date de dernière commande, puis consulter les dernières commandes de chaque restaurant.
+Extension Chrome qui ajoute directement dans Uber Eats un panneau regroupant les restaurants par dernière commande, avec leurs commandes passées et les liens vers les reçus.
+
+## Installation locale
+
+Dans `chrome://extensions`, activer le mode développeur, choisir **Charger l'extension non empaquetée**, puis sélectionner le dossier racine `my-Uber-Eats-habits` qui contient `manifest.json`. Si une erreur de chargement est déjà ouverte, cliquer sur **Retry**.
+
+Après une mise à jour des fichiers, recharger **UberEatHabits** dans `chrome://extensions`, puis actualiser l'onglet Uber Eats. Le panneau **Mes restaurants** s'ouvre automatiquement sur l'historique. Sur les autres pages Uber Eats, cliquer sur le bouton noir **Mes restaurants** en bas à droite, puis sur **Ouvrir mon historique**.
+
+Le panneau reprend la police du site et ses surfaces noires, blanches et grises. Il regroupe les commandes chargées, permet de chercher un restaurant et se met à jour lorsque davantage de commandes sont affichées sur Uber Eats. Les articles sont un aperçu des éléments visibles ; chaque reçu donne accès au détail complet. Aucune donnée n'est enregistrée ou transmise. L'accès est limité au site `https://www.ubereats.com/*`. Aucun identifiant de publication n'est inclus dans l'extension.
 
 ## Configuration de publication
 
@@ -43,11 +51,15 @@ Les identifiants de publication servent aux workflows GitHub. Ils ne seront pas 
 
 ```sh
 npm run check
+npm run format:check
+npm test
 npm run chrome-store:oauth-check
 npm run chrome-store:dry-run
 ```
 
 La vérification OAuth nécessite les trois secrets du client et du token. La dernière commande nécessite les cinq variables d'environnement et vérifie aussi la fiche de l'extension sans publier. Ne jamais enregistrer les secrets dans un fichier suivi par Git.
+
+Les tests chargent l'extension dans un Chromium isolé et vérifient le panneau injecté, le regroupement, la recherche, le chargement de nouvelles commandes et la fermeture du panneau. Ils utilisent des commandes fictives et produisent des captures desktop/mobile dans le dossier temporaire ignoré. Installer le navigateur de test avec `npx playwright install chromium` avant la première exécution. Le workflow **Validate extension** exécute ces contrôles sur les modifications de `main` et les PR.
 
 ## Références
 

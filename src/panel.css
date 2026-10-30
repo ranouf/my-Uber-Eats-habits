@@ -1,0 +1,274 @@
+:host {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #000;
+  color-scheme: light;
+}
+* {
+  box-sizing: border-box;
+}
+[hidden] {
+  display: none !important;
+}
+button,
+input {
+  font: inherit;
+}
+button,
+summary {
+  cursor: pointer;
+}
+button {
+  color: inherit;
+  border: 0;
+}
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+input:focus-visible {
+  outline: 2px solid #06c167;
+  outline-offset: 3px;
+}
+a {
+  color: inherit;
+}
+p {
+  margin: 0;
+}
+.launcher {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 22px;
+  background: #000;
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: 0 4px 16px #0002;
+  font-weight: 600;
+}
+.launcher span {
+  font-size: 22px;
+  line-height: 1;
+}
+.panel {
+  position: fixed;
+  z-index: 2147483646;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: min(440px, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-left: 1px solid #e8e8e8;
+  box-shadow: -8px 0 32px #0001;
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 28px 24px 22px;
+  border-bottom: 1px solid #e8e8e8;
+}
+.brand {
+  font-size: 14px;
+  font-weight: 600;
+}
+.brand span {
+  color: #059e55;
+}
+h2 {
+  margin: 6px 0 0;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+}
+.icon-button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: #eee;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+}
+.icon-button:hover {
+  background: #dedede;
+}
+.panel-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+.subtitle {
+  margin-bottom: 22px;
+  font-size: 16px;
+}
+.primary {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  color: #fff;
+  background: #000;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.primary:hover {
+  background: #333;
+}
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.status {
+  color: #545454;
+  font-size: 13px;
+}
+.refresh {
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+}
+input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #f3f3f3;
+  color: #000;
+  margin-bottom: 20px;
+}
+.restaurant {
+  border-bottom: 1px solid #e8e8e8;
+}
+.restaurant-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 0;
+}
+.restaurant-summary::after {
+  content: "+";
+  font-size: 23px;
+  font-weight: 400;
+}
+.restaurant[open] .restaurant-summary::after {
+  content: "−";
+}
+.restaurant-label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.restaurant-name {
+  font-size: 16px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.last-order {
+  color: #545454;
+  font-size: 12px;
+}
+.count {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  background: #eee;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+}
+.restaurant-content {
+  padding: 0 0 20px;
+}
+.text-link {
+  font-size: 12px;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+.orders,
+.items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.order {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f6f6f6;
+  border-radius: 8px;
+}
+.order-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.order-date {
+  font-size: 13px;
+}
+.order-total {
+  color: #545454;
+  font-size: 12px;
+  margin: 4px 0 10px;
+}
+.items {
+  color: #545454;
+  font-size: 12px;
+}
+.items li {
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+.notice {
+  margin-top: 22px;
+  color: #757575;
+  font-size: 11px;
+}
+.notice + .notice {
+  margin-top: 10px;
+}
+footer {
+  padding: 14px 24px;
+  border-top: 1px solid #e8e8e8;
+  color: #757575;
+  font-size: 10px;
+}
+.empty {
+  padding: 20px 0;
+  color: #545454;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .launcher {
+    bottom: 16px;
+    right: 16px;
+  }
+  .panel-header {
+    padding-top: 20px;
+  }
+}
