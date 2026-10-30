@@ -8,6 +8,7 @@
   },
   "scripts": {
     "chrome-store:dry-run": "node scripts/check-chrome-store-credentials.mjs",
+    "chrome-store:oauth-check": "node scripts/check-chrome-store-credentials.mjs --oauth-only",
     "check": "node --check scripts/check-chrome-store-credentials.mjs"
   }
 }

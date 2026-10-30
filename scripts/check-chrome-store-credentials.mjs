@@ -1,9 +1,9 @@
+const oauthOnly = process.argv.includes("--oauth-only");
 const requiredVariables = [
-  "CHROME_EXTENSION_ID",
-  "CHROME_PUBLISHER_ID",
   "CHROME_CLIENT_ID",
   "CHROME_CLIENT_SECRET",
   "CHROME_REFRESH_TOKEN",
+  ...(oauthOnly ? [] : ["CHROME_EXTENSION_ID", "CHROME_PUBLISHER_ID"]),
 ];
 
 const missingVariables = requiredVariables.filter((name) => !process.env[name]);
@@ -27,13 +27,19 @@ if (!tokenResponse.ok) {
 }
 
 const { access_token: accessToken } = await tokenResponse.json();
-const itemResponse = await fetch(
-  `https://chromewebstore.googleapis.com/v2/publishers/${process.env.CHROME_PUBLISHER_ID}/items/${process.env.CHROME_EXTENSION_ID}:fetchStatus`,
-  { headers: { Authorization: `Bearer ${accessToken}` } },
-);
+if (!oauthOnly) {
+  const itemResponse = await fetch(
+    `https://chromewebstore.googleapis.com/v2/publishers/${process.env.CHROME_PUBLISHER_ID}/items/${process.env.CHROME_EXTENSION_ID}:fetchStatus`,
+    { headers: { Authorization: `Bearer ${accessToken}` } },
+  );
 
-if (!itemResponse.ok) {
-  throw new Error(`Échec de la vérification de la fiche Chrome : HTTP ${itemResponse.status}`);
+  if (!itemResponse.ok) {
+    throw new Error(`Échec de la vérification de la fiche Chrome : HTTP ${itemResponse.status}`);
+  }
 }
 
-console.log("Identifiants UberEatHabits validés, sans téléversement ni publication.");
+console.log(
+  oauthOnly
+    ? "Accès OAuth UberEatHabits validé. La fiche Chrome Web Store n'a pas été vérifiée."
+    : "Identifiants UberEatHabits validés, sans téléversement ni publication.",
+);

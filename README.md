@@ -6,7 +6,7 @@ Extension Chrome en préparation pour retrouver les restaurants Uber Eats par da
 
 La démarche reprend celle de BNRI Évolution avec un projet Google Cloud, un client OAuth et un refresh token dédiés à UberEatHabits.
 
-Le projet `ubereathabits` (numéro `802143951052`) est créé dans l'organisation `carnould.com`. Chrome Web Store API est activée et la facturation est désactivée. Le client OAuth, le refresh token et la fiche Chrome Web Store restent à créer.
+Le projet `ubereathabits` (numéro `802143951052`) est créé dans l'organisation `carnould.com`. Chrome Web Store API est activée et la facturation est désactivée. Le client de bureau **UberEatHabits Publication** et un nouveau refresh token sont créés. Les secrets du client, du token et de l'éditeur sont enregistrés dans le dépôt. La fiche Chrome Web Store reste à créer après construction de l'extension ; `CHROME_EXTENSION_ID` n'est donc pas encore configuré.
 
 Commandes utilisées :
 
@@ -16,7 +16,7 @@ gcloud billing projects describe ubereathabits
 gcloud services enable chromewebstore.googleapis.com --project=ubereathabits --quiet
 ```
 
-La création d'un client OAuth destiné à Chrome Web Store se fait dans [Google Auth Platform](https://console.cloud.google.com/auth/clients?project=ubereathabits). Les commandes `gcloud iam oauth-clients` gèrent d'autres types de clients et ne proposent pas la portée Chrome Web Store. Utiliser un client de type **Application de bureau**, dédié à UberEatHabits, puis télécharger son JSON hors des fichiers suivis par Git. Le consentement de l'éditeur reste une étape interactive.
+La création d'un client OAuth destiné à Chrome Web Store se fait dans [Google Auth Platform](https://console.cloud.google.com/auth/clients?project=ubereathabits). Les commandes `gcloud iam oauth-clients` gèrent d'autres types de clients et ne proposent pas la portée Chrome Web Store. Le client est de type **Application de bureau**, dédié à UberEatHabits. Le flux a utilisé la bibliothèque officielle Google fournie avec le SDK et uniquement la portée Chrome Web Store : la commande `gcloud auth application-default login` exigeait aussi la portée Google Cloud. Le consentement de l'éditeur est une étape interactive.
 
 1. Créer le projet Google Cloud `UberEatHabits`.
 2. Activer Chrome Web Store API dans ce projet.
@@ -25,7 +25,7 @@ La création d'un client OAuth destiné à Chrome Web Store se fait dans [Google
 5. Autoriser le compte éditeur avec la portée `https://www.googleapis.com/auth/chromewebstore` et obtenir un nouveau refresh token avec accès hors ligne.
 6. Créer la fiche Chrome Web Store de cette extension pour obtenir son identifiant.
 7. Enregistrer les valeurs dans les secrets du dépôt `ranouf/my-Uber-Eats-habits` avec `gh secret set`.
-8. Exécuter le workflow manuel **Validate Chrome Web Store credentials**.
+8. Exécuter le workflow manuel **Validate Chrome Web Store credentials**. Il vérifie OAuth par défaut ; activer `check_extension` après création de la fiche pour vérifier également l'accès à cette extension.
 
 Secrets attendus :
 
@@ -43,10 +43,11 @@ Les identifiants de publication servent aux workflows GitHub. Ils ne seront pas 
 
 ```sh
 npm run check
+npm run chrome-store:oauth-check
 npm run chrome-store:dry-run
 ```
 
-La seconde commande nécessite les cinq variables d'environnement. Elle vérifie l'accès OAuth et la fiche de l'extension sans publier. Ne jamais enregistrer les secrets dans un fichier suivi par Git.
+La vérification OAuth nécessite les trois secrets du client et du token. La dernière commande nécessite les cinq variables d'environnement et vérifie aussi la fiche de l'extension sans publier. Ne jamais enregistrer les secrets dans un fichier suivi par Git.
 
 ## Références
 
