@@ -26,6 +26,7 @@ jobs:
         if: always()
         with:
           name: extension-validation
+          include-hidden-files: true
           path: |
             test-results/
             .codex/panel-*.png
