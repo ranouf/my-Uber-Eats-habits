@@ -127,7 +127,7 @@ test("ouvre le panneau depuis le site et guide vers l'historique", async () => {
 test("actualise les commandes chargées sans perdre le restaurant ouvert", async () => {
   const page = await context.newPage();
   await page.goto("https://www.ubereats.com/orders");
-  await page.getByText("La Cantine", { exact: true }).last().click();
+  await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
   await page.evaluate(() => {
     const card = document
       .querySelector('a[href*="modctx=order-1"]')
@@ -146,7 +146,7 @@ test("affiche un panneau utilisable sur mobile et le ferme au clavier", async ()
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("https://www.ubereats.com/orders");
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
-  await page.getByText("La Cantine", { exact: true }).last().click();
+  await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
   const panel = page.getByRole("complementary", { name: "UberEatHabits — Mes restaurants" });
   expect((await panel.boundingBox()).width).toBe(390);
   await page.screenshot({ path: ".codex/panel-mobile.png" });
