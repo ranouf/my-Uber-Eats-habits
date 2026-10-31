@@ -1,54 +1,47 @@
-export function collectOrders() {
-  const receiptSelector = 'a[href*="mod=orderReceipt"]';
-  return [...document.querySelectorAll(`main ${receiptSelector}`)]
-    .map((receipt) => {
-      let card = receipt.parentElement;
-      while (
-        card.tagName !== "MAIN" &&
-        (!card.querySelector('a[href*="/store/"]') || !card.querySelector("li"))
-      ) {
-        card = card.parentElement;
-      }
-      if (card.tagName === "MAIN" || card.querySelectorAll(receiptSelector).length !== 1) {
-        return null;
-      }
-
-      const restaurant = [...card.querySelectorAll('a[href*="/store/"]')].find(
-        (link) => link.textContent.trim() && !link.querySelector("figure"),
-      );
-      if (!restaurant) return null;
-
-      const text = card.innerText;
-      const restaurantName = restaurant.innerText.trim();
-      const metadata = text
-        .slice(
-          text.indexOf(restaurantName) + restaurantName.length,
-          text.indexOf(receipt.innerText.trim()),
-        )
-        .split(/[•\n]/)
-        .map((part) => part.trim())
-        .filter(Boolean);
-      const date = metadata.at(-1);
-      const receiptUrl = new URL(receipt.href);
-      const restaurantUrl = new URL(restaurant.href);
-      const items = [...card.querySelectorAll("li")]
-        .filter((item) => !item.querySelector("li"))
-        .map((item) => item.innerText.replace(/\s+/g, " ").replace(/^(\d+)\s*/, "$1 × "));
-
-      return {
-        id: receiptUrl.searchParams.get("modctx"),
-        restaurantId: restaurantUrl.pathname.split("/").filter(Boolean).at(-1),
-        restaurant: restaurant.textContent.trim(),
-        restaurantUrl: restaurantUrl.href,
-        date,
-        total: metadata.find((part) => /[$€£¥]/.test(part)),
-        receiptUrl: receiptUrl.href,
-        items,
-      };
-    })
-    .filter(Boolean);
+export async function loadOrderPage(lastWorkflowUUID = "") {
+  const locale = location.pathname.match(/^\/([a-z]{2}(?:-[a-z]{2})?)(?:\/|$)/)?.[1] || "ca-fr";
+  const response = await fetch(`/_p/api/getPastOrdersV1?localeCode=${locale}`, {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { "content-type": "application/json", "x-csrf-token": "x" },
+    body: JSON.stringify({ lastWorkflowUUID }),
+  });
+  if (response.status === 401 || response.status === 403) {
+    throw new Error("Reconnectez-vous à Uber Eats, puis actualisez les commandes.");
+  }
+  if (!response.ok) throw new Error("Uber Eats ne peut pas charger l’historique pour le moment.");
+  const payload = await response.json();
+  if (payload.status !== "success")
+    throw new Error("Uber Eats n’a pas renvoyé l’historique attendu.");
+  const { ordersMap, orderUuids, meta } = payload.data;
+  const orders = orderUuids.map((id) => {
+    const { baseEaterOrder: order, storeInfo: store, fareInfo: fare } = ordersMap[id];
+    const storeId = btoa(
+      String.fromCharCode(
+        ...store.uuid
+          .replaceAll("-", "")
+          .match(/../g)
+          .map((hex) => parseInt(hex, 16)),
+      ),
+    )
+      .replaceAll("+", "-")
+      .replaceAll("/", "_")
+      .replace(/=+$/, "");
+    return {
+      id,
+      restaurantId: store.uuid,
+      restaurant: store.title,
+      restaurantUrl: new URL(`/${locale}/store/${store.slug}/${storeId}`, location.origin).href,
+      date: new Intl.DateTimeFormat("fr-CA", { dateStyle: "medium", timeStyle: "short" }).format(
+        new Date(order.lastStateChangeAt),
+      ),
+      total: fare.checkoutInfo.find((line) => line.key === "eats_fare.total").formattedValue,
+      receiptUrl: new URL(`/${locale}/orders?mod=orderReceipt&modctx=${id}`, location.origin).href,
+      items: order.shoppingCart.items.map((item) => `${item.quantity} × ${item.title}`),
+    };
+  });
+  return { orders, cursor: orderUuids.at(-1), hasMore: meta.hasMore };
 }
-
 export function groupRestaurants(orders) {
   const restaurants = new Map();
   const seen = new Set();

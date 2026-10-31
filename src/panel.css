@@ -144,6 +144,14 @@ h2 {
 .primary:hover {
   background: #333;
 }
+.load-more {
+  width: 100%;
+  margin-top: 20px;
+}
+button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
 .status-row {
   display: flex;
   align-items: center;

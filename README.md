@@ -6,9 +6,11 @@ Extension Chrome qui ajoute directement dans Uber Eats un panneau regroupant les
 
 Dans `chrome://extensions`, activer le mode développeur, choisir **Charger l'extension non empaquetée**, puis sélectionner le dossier racine `my-Uber-Eats-habits` qui contient `manifest.json`. Si une erreur de chargement est déjà ouverte, cliquer sur **Retry**.
 
-Après une mise à jour des fichiers, recharger **UberEatHabits** dans `chrome://extensions`, puis actualiser l'onglet Uber Eats. Le panneau **Mes restaurants** s'ouvre automatiquement sur l'historique. Sur les autres pages Uber Eats, cliquer sur le bouton noir **Mes restaurants** en bas à droite, puis sur **Ouvrir mon historique**.
+Après une mise à jour des fichiers, recharger **UberEatHabits** dans `chrome://extensions`, puis actualiser l'onglet Uber Eats. Le panneau **Mes restaurants** s'ouvre automatiquement sur l'historique. Sur les autres pages, notamment `/ca-fr/feed?diningMode=DELIVERY`, cliquer sur le bouton noir **Mes restaurants** en bas à droite : les commandes sont chargées directement sans quitter la page.
 
-Le panneau reprend la police du site et ses surfaces noires, blanches et grises. Il regroupe les commandes chargées, permet de chercher un restaurant et se met à jour lorsque davantage de commandes sont affichées sur Uber Eats. Les articles sont un aperçu des éléments visibles ; chaque reçu donne accès au détail complet. Aucune donnée n'est enregistrée ou transmise. L'accès est limité au site `https://www.ubereats.com/*`. Aucun identifiant de publication n'est inclus dans l'extension.
+Le panneau reprend la police du site et ses surfaces noires, blanches et grises. Il regroupe les commandes retournées par l'API du site et permet de chercher un restaurant. **Charger plus de commandes** récupère la page suivante ; **Actualiser** reprend les commandes les plus récentes. Les articles proviennent de la réponse API ; chaque reçu donne accès aux personnalisations et au détail complet. Les données restent en mémoire dans l'onglet, sans stockage persistant ni envoi à un service tiers. L'accès est limité au site `https://www.ubereats.com/*`. Aucun identifiant de publication n'est inclus dans l'extension.
+
+La source et la pagination vérifiées sont décrites dans [l'analyse API](UBER_EATS_API.md). La session Uber Eats existante est utilisée, sans création ni copie de token. Cette API interne peut évoluer ; une erreur de session ou de lecture est affichée explicitement.
 
 ## Versionnement
 
