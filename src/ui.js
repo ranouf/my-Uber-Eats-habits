@@ -59,7 +59,8 @@ export function renderRestaurants(results, restaurants, query) {
   }
 }
 
-export function createPanel(version) {
+export function createPanel() {
+  const { version } = chrome.runtime.getManifest();
   const host = element("div", "");
   host.id = "uber-eat-habits-extension";
   const shadow = host.attachShadow({ mode: "open" });
