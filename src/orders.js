@@ -1,54 +1,64 @@
-export function collectOrders() {
-  const receiptSelector = 'a[href*="mod=orderReceipt"]';
-  return [...document.querySelectorAll(`main ${receiptSelector}`)]
-    .map((receipt) => {
-      let card = receipt.parentElement;
-      while (
-        card.tagName !== "MAIN" &&
-        (!card.querySelector('a[href*="/store/"]') || !card.querySelector("li"))
-      ) {
-        card = card.parentElement;
-      }
-      if (card.tagName === "MAIN" || card.querySelectorAll(receiptSelector).length !== 1) {
-        return null;
-      }
+import { createApiClient } from "./api-client.js";
 
-      const restaurant = [...card.querySelectorAll('a[href*="/store/"]')].find(
-        (link) => link.textContent.trim() && !link.querySelector("figure"),
-      );
-      if (!restaurant) return null;
-
-      const text = card.innerText;
-      const restaurantName = restaurant.innerText.trim();
-      const metadata = text
-        .slice(
-          text.indexOf(restaurantName) + restaurantName.length,
-          text.indexOf(receipt.innerText.trim()),
-        )
-        .split(/[•\n]/)
-        .map((part) => part.trim())
-        .filter(Boolean);
-      const date = metadata.at(-1);
-      const receiptUrl = new URL(receipt.href);
-      const restaurantUrl = new URL(restaurant.href);
-      const items = [...card.querySelectorAll("li")]
-        .filter((item) => !item.querySelector("li"))
-        .map((item) => item.innerText.replace(/\s+/g, " ").replace(/^(\d+)\s*/, "$1 × "));
-
-      return {
-        id: receiptUrl.searchParams.get("modctx"),
-        restaurantId: restaurantUrl.pathname.split("/").filter(Boolean).at(-1),
-        restaurant: restaurant.textContent.trim(),
-        restaurantUrl: restaurantUrl.href,
-        date,
-        total: metadata.find((part) => /[$€£¥]/.test(part)),
-        receiptUrl: receiptUrl.href,
-        items,
-      };
-    })
-    .filter(Boolean);
+function getLocale() {
+  return location.pathname.match(/^\/([a-z]{2}(?:-[a-z]{2})?)(?:\/|$)/)?.[1] || "ca-fr";
 }
 
+export async function requestApi(operation, body) {
+  const client = createApiClient(getLocale());
+  const payload = await client[operation](body);
+  return payload.data;
+}
+
+export async function loadOrderPage(lastWorkflowUUID = "") {
+  const locale = getLocale();
+  const { ordersMap, orderUuids, meta } = await requestApi("getPastOrdersV1", { lastWorkflowUUID });
+  const orders = orderUuids.map((id) => {
+    const { baseEaterOrder: order, storeInfo: store, fareInfo: fare, ratingInfo } = ordersMap[id];
+    const ownRating = ratingInfo.userRatings.find(
+      (rating) => rating.schema === "FIVE_STARS" && rating.subjectType === "STORE",
+    );
+    const ratingIndex = ["ONE_STAR", "TWO_STAR", "THREE_STAR", "FOUR_STAR", "FIVE_STAR"].indexOf(
+      ownRating?.value,
+    );
+    const historyRating = Array.isArray(store.rating) && store.rating.length > 0;
+    const storeId = btoa(
+      String.fromCharCode(
+        ...store.uuid
+          .replaceAll("-", "")
+          .match(/../g)
+          .map((hex) => parseInt(hex, 16)),
+      ),
+    )
+      .replaceAll("+", "-")
+      .replaceAll("/", "_")
+      .replace(/=+$/, "");
+    return {
+      id,
+      restaurantId: store.uuid,
+      restaurant: store.title,
+      publicRating: Array.isArray(store.rating) ? null : store.rating,
+      personalRating: historyRating
+        ? store.rating.filter(Boolean).length
+        : ownRating
+          ? ratingIndex < 0
+            ? null
+            : ratingIndex + 1
+          : ratingInfo.userRatings.length === 0
+            ? 0
+            : null,
+      canRate: ratingInfo.isRatable,
+      restaurantUrl: new URL(`/${locale}/store/${store.slug}/${storeId}`, location.origin).href,
+      date: new Intl.DateTimeFormat("fr-CA", { dateStyle: "medium", timeStyle: "short" }).format(
+        new Date(order.lastStateChangeAt),
+      ),
+      total: fare.checkoutInfo.find((line) => line.key === "eats_fare.total").formattedValue,
+      receiptUrl: new URL(`/${locale}/orders?mod=orderReceipt&modctx=${id}`, location.origin).href,
+      items: order.shoppingCart.items.map((item) => `${item.quantity} × ${item.title}`),
+    };
+  });
+  return { orders, cursor: orderUuids.at(-1), hasMore: meta.hasMore };
+}
 export function groupRestaurants(orders) {
   const restaurants = new Map();
   const seen = new Set();
@@ -60,6 +70,7 @@ export function groupRestaurants(orders) {
         id: order.restaurantId,
         name: order.restaurant,
         url: order.restaurantUrl,
+        publicRating: order.publicRating,
         orders: [],
       });
     }

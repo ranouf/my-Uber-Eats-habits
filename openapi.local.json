@@ -1,0 +1,3625 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Uber Eats Habits — contrat local non officiel",
+    "version": "1.0.0",
+    "description": "Reconstruction partielle des opérations internes /_p/api du site. Aucun schéma officiel Uber. Sources : UBER_EATS_API_CATALOG.md et UBER_EATS_UNOFFICIAL_CLIENTS.md. Les réponses restent enveloppées dans status/data."
+  },
+  "servers": [
+    {
+      "url": "https://www.ubereats.com/_p/api"
+    }
+  ],
+  "paths": {
+    "/addItemsToDraftOrderV2": {
+      "post": {
+        "operationId": "addItemsToDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/addItemsToGroupDraftOrderV2": {
+      "post": {
+        "operationId": "addItemsToGroupDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/addItemsToOrderV1": {
+      "post": {
+        "operationId": "addItemsToOrderV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/addMemberToDraftOrderV1": {
+      "post": {
+        "operationId": "addMemberToDraftOrderV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/addMemberToDraftOrderV2": {
+      "post": {
+        "operationId": "addMemberToDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/allStoresV1": {
+      "post": {
+        "operationId": "allStoresV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applyPromoV1": {
+      "post": {
+        "operationId": "applyPromoV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cancelOrderV1": {
+      "post": {
+        "operationId": "cancelOrderV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkAndUpdateGratisV1": {
+      "post": {
+        "operationId": "checkAndUpdateGratisV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkoutOrdersByDraftOrdersV1": {
+      "post": {
+        "operationId": "checkoutOrdersByDraftOrdersV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/confirmCartUpdatesV1": {
+      "post": {
+        "operationId": "confirmCartUpdatesV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/createBundleGroup": {
+      "post": {
+        "operationId": "createBundleGroup",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/createDraftOrderByOrderUuidV1": {
+      "post": {
+        "operationId": "createDraftOrderByOrderUuidV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/createDraftOrderV2": {
+      "post": {
+        "operationId": "createDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/createEaterFavoritesV1": {
+      "post": {
+        "operationId": "createEaterFavoritesV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/createGuestOrdersByDraftOrdersV1": {
+      "post": {
+        "operationId": "createGuestOrdersByDraftOrdersV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deleteEaterFavoritesV1": {
+      "post": {
+        "operationId": "deleteEaterFavoritesV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discardBundleGroup": {
+      "post": {
+        "operationId": "discardBundleGroup",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discardDraftOrdersV1": {
+      "post": {
+        "operationId": "discardDraftOrdersV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emitXlbHomeFeedEventV1": {
+      "post": {
+        "operationId": "emitXlbHomeFeedEventV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flagReviewV1": {
+      "post": {
+        "operationId": "flagReviewV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getActiveOrdersV1": {
+      "post": {
+        "operationId": "getActiveOrdersV1",
+        "description": "Contrat partiel reconstruit localement.",
+        "x-contract-status": "partial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActiveOrdersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveOrdersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getArrearsV1": {
+      "post": {
+        "operationId": "getArrearsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getBusinessPoliciesForUserV2": {
+      "post": {
+        "operationId": "getBusinessPoliciesForUserV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getBusinessProfilesV1": {
+      "post": {
+        "operationId": "getBusinessProfilesV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getCanonicalProductItemV1": {
+      "post": {
+        "operationId": "getCanonicalProductItemV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getCartFaresV1": {
+      "post": {
+        "operationId": "getCartFaresV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getCartsViewForEaterUuidV1": {
+      "post": {
+        "operationId": "getCartsViewForEaterUuidV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getCatalogPresentationV2": {
+      "post": {
+        "operationId": "getCatalogPresentationV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getCheckoutPresentationV1": {
+      "post": {
+        "operationId": "getCheckoutPresentationV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getClosestChainStoreFeedV1": {
+      "post": {
+        "operationId": "getClosestChainStoreFeedV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getComplianceAds": {
+      "post": {
+        "operationId": "getComplianceAds",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getDeliveryLocationConfigV2": {
+      "post": {
+        "operationId": "getDeliveryLocationConfigV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getDeliveryLocationV1": {
+      "post": {
+        "operationId": "getDeliveryLocationV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getDeliveryLocationV2": {
+      "post": {
+        "operationId": "getDeliveryLocationV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getDeliveryLocationsV2": {
+      "post": {
+        "operationId": "getDeliveryLocationsV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getDraftOrderByUuidV1": {
+      "post": {
+        "operationId": "getDraftOrderByUuidV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getDraftOrderByUuidV2": {
+      "post": {
+        "operationId": "getDraftOrderByUuidV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getDraftOrdersByEaterUuidV1": {
+      "post": {
+        "operationId": "getDraftOrdersByEaterUuidV1",
+        "description": "Contrat partiel reconstruit localement.",
+        "x-contract-status": "partial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftOrdersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftOrdersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getEaterMessagingContentV1": {
+      "post": {
+        "operationId": "getEaterMessagingContentV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getEaterOrderCountsV1": {
+      "post": {
+        "operationId": "getEaterOrderCountsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getEatsPassV1": {
+      "post": {
+        "operationId": "getEatsPassV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getFeedByIdV1": {
+      "post": {
+        "operationId": "getFeedByIdV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getFeedDraftOrderItemsUpdateV1": {
+      "post": {
+        "operationId": "getFeedDraftOrderItemsUpdateV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getFeedEuDisclaimerV1": {
+      "post": {
+        "operationId": "getFeedEuDisclaimerV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getFeedV1": {
+      "post": {
+        "operationId": "getFeedV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getGuestCheckoutEligibilityV1": {
+      "post": {
+        "operationId": "getGuestCheckoutEligibilityV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getInStoreSearchV1": {
+      "post": {
+        "operationId": "getInStoreSearchV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getInstructionForLocationV1": {
+      "post": {
+        "operationId": "getInstructionForLocationV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getInvoiceStatusV1": {
+      "post": {
+        "operationId": "getInvoiceStatusV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getItemSubstitutionsV1": {
+      "post": {
+        "operationId": "getItemSubstitutionsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getLatestPendingRatingV1": {
+      "post": {
+        "operationId": "getLatestPendingRatingV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getLearningContentV1": {
+      "post": {
+        "operationId": "getLearningContentV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getMealPlanByUuidV1": {
+      "post": {
+        "operationId": "getMealPlanByUuidV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getMealPlanDeliveryLocationV1": {
+      "post": {
+        "operationId": "getMealPlanDeliveryLocationV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getMealPlanOrdersViewV1": {
+      "post": {
+        "operationId": "getMealPlanOrdersViewV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getMembershipsAndOfferingsForUserV1": {
+      "post": {
+        "operationId": "getMembershipsAndOfferingsForUserV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getMenuItemV1": {
+      "post": {
+        "operationId": "getMenuItemV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getNavigationLinksV1": {
+      "post": {
+        "operationId": "getNavigationLinksV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getOnlineOrderingCustomizationV1": {
+      "post": {
+        "operationId": "getOnlineOrderingCustomizationV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getOrderEntitiesV1": {
+      "post": {
+        "operationId": "getOrderEntitiesV1",
+        "description": "Contrat partiel reconstruit localement.",
+        "x-contract-status": "partial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderEntitiesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getOrderEntityByUuidV1": {
+      "post": {
+        "operationId": "getOrderEntityByUuidV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getOriginalCartV1": {
+      "post": {
+        "operationId": "getOriginalCartV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getOriginsLocationDetailsFromCoordinateV1": {
+      "post": {
+        "operationId": "getOriginsLocationDetailsFromCoordinateV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getPaginatedStoresV1": {
+      "post": {
+        "operationId": "getPaginatedStoresV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getPastOrdersV1": {
+      "post": {
+        "operationId": "getPastOrdersV1",
+        "description": "Contrat partiel reconstruit localement.",
+        "x-contract-status": "partial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PastOrdersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PastOrdersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getPendingRatingV1": {
+      "post": {
+        "operationId": "getPendingRatingV1",
+        "description": "Contrat partiel reconstruit localement.",
+        "x-contract-status": "partial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PendingRatingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PendingRatingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getProfilesForUserV1": {
+      "post": {
+        "operationId": "getProfilesForUserV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getRepeatOrderViewV1": {
+      "post": {
+        "operationId": "getRepeatOrderViewV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getSearchFeedV1": {
+      "post": {
+        "operationId": "getSearchFeedV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getSearchHomeV2": {
+      "post": {
+        "operationId": "getSearchHomeV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getSearchSubstitutionsV1": {
+      "post": {
+        "operationId": "getSearchSubstitutionsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getSearchSuggestionsV1": {
+      "post": {
+        "operationId": "getSearchSuggestionsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getSeoFeedV1": {
+      "post": {
+        "operationId": "getSeoFeedV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getSessionElapseV1": {
+      "post": {
+        "operationId": "getSessionElapseV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getStoreV1": {
+      "post": {
+        "operationId": "getStoreV1",
+        "description": "Contrat partiel reconstruit localement.",
+        "x-contract-status": "partial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getSupportedLanguagesV1": {
+      "post": {
+        "operationId": "getSupportedLanguagesV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getTaxProfilesConfig": {
+      "post": {
+        "operationId": "getTaxProfilesConfig",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getUberBalancesV1": {
+      "post": {
+        "operationId": "getUberBalancesV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getUberOneMbsV1": {
+      "post": {
+        "operationId": "getUberOneMbsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getUserPromoDetailsV1": {
+      "post": {
+        "operationId": "getUserPromoDetailsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getUserPromoViewsV1": {
+      "post": {
+        "operationId": "getUserPromoViewsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getUserV1": {
+      "post": {
+        "operationId": "getUserV1",
+        "description": "Contrat partiel reconstruit localement.",
+        "x-contract-status": "partial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getVouchersDataV2": {
+      "post": {
+        "operationId": "getVouchersDataV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logSessionActivityV1": {
+      "post": {
+        "operationId": "logSessionActivityV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mapsSearchV1": {
+      "post": {
+        "operationId": "mapsSearchV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/provideDateOfBirthV1": {
+      "post": {
+        "operationId": "provideDateOfBirthV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/removeItemsFromDraftOrderV2": {
+      "post": {
+        "operationId": "removeItemsFromDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/removeItemsFromGroupDraftOrderV2": {
+      "post": {
+        "operationId": "removeItemsFromGroupDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/removeMemberFromDraftOrderV1": {
+      "post": {
+        "operationId": "removeMemberFromDraftOrderV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/removeMemberFromDraftOrderV2": {
+      "post": {
+        "operationId": "removeMemberFromDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/replaceItemsInDraftOrderV1": {
+      "post": {
+        "operationId": "replaceItemsInDraftOrderV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searchBusinessExpenseCodesForUserV1": {
+      "post": {
+        "operationId": "searchBusinessExpenseCodesForUserV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searchSuggestV2": {
+      "post": {
+        "operationId": "searchSuggestV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setLocationDetailsWithAddressV1": {
+      "post": {
+        "operationId": "setLocationDetailsWithAddressV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setNupEventsV1": {
+      "post": {
+        "operationId": "setNupEventsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setRobotEventsV1": {
+      "post": {
+        "operationId": "setRobotEventsV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setTargetLocationV1": {
+      "post": {
+        "operationId": "setTargetLocationV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setUserConsentV1": {
+      "post": {
+        "operationId": "setUserConsentV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/submitRatingV1": {
+      "post": {
+        "operationId": "submitRatingV1",
+        "description": "Contrat partiel reconstruit localement.",
+        "x-contract-status": "partial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreRatingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateActiveOrderDeliveryLocationV1": {
+      "post": {
+        "operationId": "updateActiveOrderDeliveryLocationV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateComplianceV1": {
+      "post": {
+        "operationId": "updateComplianceV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateDraftOrderV2": {
+      "post": {
+        "operationId": "updateDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateItemInDraftOrderV2": {
+      "post": {
+        "operationId": "updateItemInDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateItemInGroupDraftOrderV2": {
+      "post": {
+        "operationId": "updateItemInGroupDraftOrderV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateItemsInOrderV1": {
+      "post": {
+        "operationId": "updateItemsInOrderV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updateOfferStateV1": {
+      "post": {
+        "operationId": "updateOfferStateV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upsertDeliveryLocationV2": {
+      "post": {
+        "operationId": "upsertDeliveryLocationV2",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upsertDeliveryLocationWithInstructionV1": {
+      "post": {
+        "operationId": "upsertDeliveryLocationWithInstructionV1",
+        "description": "Opération inventoriée ; contrat non vérifié. Les noms ne garantissent pas la disponibilité.",
+        "x-contract-status": "unverified",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enveloppe RPC du site. Un statut HTTP 200 ne garantit pas le succès métier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiRequestBody": {
+        "type": "object",
+        "additionalProperties": {}
+      },
+      "PastOrdersRequest": {
+        "type": "object",
+        "properties": {
+          "lastWorkflowUUID": {
+            "type": "string",
+            "default": ""
+          },
+          "limit": {
+            "type": "integer"
+          }
+        }
+      },
+      "StoreRatingItem": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string",
+            "enum": ["ONE_STAR", "TWO_STAR", "THREE_STAR", "FOUR_STAR", "FIVE_STAR"]
+          },
+          "schema": {
+            "type": "string",
+            "enum": ["FIVE_STARS"]
+          },
+          "subjectType": {
+            "type": "string",
+            "enum": ["STORE"]
+          }
+        },
+        "required": ["uuid", "value", "schema", "subjectType"]
+      },
+      "StoredRating": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string"
+          },
+          "subjectType": {
+            "type": "string"
+          }
+        },
+        "required": ["value", "schema", "subjectType"]
+      },
+      "StorePublicRating": {
+        "type": "object",
+        "properties": {
+          "ratingValue": {
+            "type": "number"
+          },
+          "reviewCount": {}
+        },
+        "required": ["ratingValue", "reviewCount"]
+      },
+      "StoreRatingRequest": {
+        "type": "object",
+        "properties": {
+          "workflowUUID": {
+            "type": "string"
+          },
+          "entryPoint": {
+            "type": "string"
+          },
+          "ratingItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreRatingItem"
+            }
+          }
+        },
+        "required": ["workflowUUID", "entryPoint", "ratingItems"]
+      },
+      "PendingRatingRequest": {
+        "type": "object",
+        "properties": {
+          "orderUuid": {
+            "type": "string"
+          },
+          "entryPoint": {
+            "type": "string"
+          }
+        },
+        "required": ["orderUuid", "entryPoint"]
+      },
+      "PendingRatingData": {
+        "type": "object",
+        "properties": {
+          "workflowUUID": {
+            "type": "string"
+          },
+          "ratingInputPagesOrder": {
+            "type": "object",
+            "properties": {
+              "storeRatingPage": {
+                "type": "string"
+              }
+            }
+          },
+          "ratingInputPagesMap": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "uuid": {
+                  "type": "string"
+                },
+                "identifiers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PastOrder": {
+        "type": "object",
+        "properties": {
+          "baseEaterOrder": {
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "type": "string"
+              },
+              "storeUuid": {
+                "type": "string"
+              },
+              "lastStateChangeAt": {
+                "type": "string"
+              },
+              "completedAt": {
+                "type": "string",
+                "nullable": true
+              },
+              "currencyCode": {
+                "type": "string"
+              },
+              "shoppingCart": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "quantity": {
+                          "type": "number"
+                        },
+                        "title": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["quantity", "title"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "storeInfo": {
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "rating": {
+                "type": "array",
+                "items": {
+                  "type": "boolean"
+                },
+                "nullable": true,
+                "description": "Note personnelle de cette commande : une valeur par étoile. Distincte de la moyenne publique renvoyée par getStoreV1."
+              }
+            }
+          },
+          "ratingInfo": {
+            "type": "object",
+            "properties": {
+              "isRatable": {
+                "type": "boolean"
+              },
+              "userRatings": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StoredRating"
+                }
+              }
+            }
+          },
+          "fareInfo": {
+            "type": "object",
+            "properties": {
+              "totalPrice": {
+                "type": "number"
+              },
+              "checkoutInfo": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "formattedValue": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PastOrdersData": {
+        "type": "object",
+        "properties": {
+          "ordersMap": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PastOrder"
+            }
+          },
+          "orderUuids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "hasMore": {
+                "type": "boolean"
+              }
+            },
+            "required": ["hasMore"]
+          }
+        },
+        "required": ["ordersMap", "orderUuids", "meta"]
+      },
+      "ActiveOrdersRequest": {
+        "type": "object",
+        "properties": {
+          "orderUuid": {
+            "type": "string",
+            "nullable": true
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "showAppUpsellIllustration": {
+            "type": "boolean"
+          },
+          "isDirectTracking": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ActiveOrdersData": {
+        "type": "object",
+        "properties": {
+          "orders": {
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "DraftOrdersRequest": {
+        "type": "object",
+        "properties": {
+          "removeAdapters": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DraftOrdersData": {
+        "type": "object",
+        "properties": {
+          "draftOrders": {
+            "type": "array",
+            "items": {}
+          },
+          "cartsView": {}
+        }
+      },
+      "OrderEntitiesData": {
+        "type": "object",
+        "properties": {
+          "orderEntities": {},
+          "orderEntitiesView": {
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "UserRequest": {
+        "type": "object",
+        "properties": {
+          "shouldGetSubsMetadata": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserData": {
+        "type": "object",
+        "properties": {
+          "isLoggedIn": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": {}
+      },
+      "StoreRequest": {
+        "type": "object",
+        "properties": {
+          "storeUuid": {
+            "type": "string"
+          }
+        },
+        "required": ["storeUuid"]
+      },
+      "StoreData": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "$ref": "#/components/schemas/StorePublicRating"
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {}
+        },
+        "required": ["status", "data"]
+      },
+      "ActiveOrdersResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ActiveOrdersData"
+          }
+        },
+        "required": ["status", "data"]
+      },
+      "DraftOrdersResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DraftOrdersData"
+          }
+        },
+        "required": ["status", "data"]
+      },
+      "OrderEntitiesResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/OrderEntitiesData"
+          }
+        },
+        "required": ["status", "data"]
+      },
+      "PastOrdersResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PastOrdersData"
+          }
+        },
+        "required": ["status", "data"]
+      },
+      "PendingRatingResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PendingRatingData"
+          }
+        },
+        "required": ["status", "data"]
+      },
+      "StoreResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/StoreData"
+          }
+        },
+        "required": ["status", "data"]
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserData"
+          }
+        },
+        "required": ["status", "data"]
+      }
+    }
+  }
+}

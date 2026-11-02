@@ -1,0 +1,27 @@
+{
+  "runtime": "Net100",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "openapi.local.json"
+    }
+  },
+  "codeGenerators": {
+    "openApiToTypeScriptClient": {
+      "className": "UberEatsApiService",
+      "template": "Fetch",
+      "typeScriptVersion": 5,
+      "promiseType": "Promise",
+      "dateTimeType": "string",
+      "typeStyle": "Interface",
+      "enumStyle": "StringLiteral",
+      "generateClientClasses": true,
+      "generateClientInterfaces": false,
+      "generateDtoTypes": true,
+      "operationGenerationMode": "SingleClientFromOperationId",
+      "generateOptionalParameters": true,
+      "useAbortSignal": true,
+      "output": "src/api.services.ts",
+      "newLineBehavior": "LF"
+    }
+  }
+}

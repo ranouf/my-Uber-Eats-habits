@@ -20,6 +20,11 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - run: npm run api:generate
+      - run: git diff --exit-code -- src/api.services.ts src/api.services.js
       - run: npx playwright install --with-deps chromium
       - run: npm run format:check
       - run: npm run check
@@ -33,3 +38,4 @@ jobs:
           path: |
             test-results/
             .codex/panel-*.png
+            .codex/feed-*.png

@@ -1,4 +1,4 @@
-# UberEatHabits
+# Uber Eats Habits
 
 Extension Chrome qui ajoute directement dans Uber Eats un panneau regroupant les restaurants par dernière commande, avec leurs commandes passées et les liens vers les reçus.
 
@@ -6,9 +6,23 @@ Extension Chrome qui ajoute directement dans Uber Eats un panneau regroupant les
 
 Dans `chrome://extensions`, activer le mode développeur, choisir **Charger l'extension non empaquetée**, puis sélectionner le dossier racine `my-Uber-Eats-habits` qui contient `manifest.json`. Si une erreur de chargement est déjà ouverte, cliquer sur **Retry**.
 
-Après une mise à jour des fichiers, recharger **UberEatHabits** dans `chrome://extensions`, puis actualiser l'onglet Uber Eats. Le panneau **Mes restaurants** s'ouvre automatiquement sur l'historique. Sur les autres pages Uber Eats, cliquer sur le bouton noir **Mes restaurants** en bas à droite, puis sur **Ouvrir mon historique**.
+Après une mise à jour des fichiers, recharger **Uber Eats Habits** dans `chrome://extensions`, puis actualiser l'onglet Uber Eats. Le panneau **Mes restaurants** s'ouvre automatiquement sur l'historique. Sur les autres pages, notamment `/ca-fr/feed?diningMode=DELIVERY`, cliquer sur le bouton noir **Mes restaurants** en bas à droite : les commandes sont chargées directement sans quitter la page.
 
-Le panneau reprend la police du site et ses surfaces noires, blanches et grises. Il regroupe les commandes chargées, permet de chercher un restaurant et se met à jour lorsque davantage de commandes sont affichées sur Uber Eats. Les articles sont un aperçu des éléments visibles ; chaque reçu donne accès au détail complet. Aucune donnée n'est enregistrée ou transmise. L'accès est limité au site `https://www.ubereats.com/*`. Aucun identifiant de publication n'est inclus dans l'extension.
+Le panneau reprend la police du site et ses surfaces noires, blanches et grises. Il regroupe les commandes retournées par l'API du site et permet de chercher un restaurant. Les commandes plus anciennes se chargent automatiquement en arrivant au bas de la liste ; **Actualiser** reprend les commandes les plus récentes. Les articles proviennent de la réponse API ; chaque reçu donne accès aux personnalisations et au détail complet. Les données restent en mémoire dans l'onglet, sans stockage persistant ni envoi à un service tiers. L'accès est limité au site `https://www.ubereats.com/*`. Aucun identifiant de publication n'est inclus dans l'extension.
+
+La source et la pagination vérifiées sont décrites dans [l'analyse API](UBER_EATS_API.md). La session Uber Eats existante est utilisée, sans création ni copie de token. Cette API interne peut évoluer ; une erreur de session ou de lecture est affichée explicitement.
+
+Le service [src/api.services.ts](src/api.services.ts) est généré par la CLI NSwag depuis le [schéma local non officiel](openapi.local.json), qui décrit 109 opérations inventoriées. Le panneau utilise sa version JavaScript générée et un intercepteur `fetch` commun pour la session et les erreurs. Après une modification du schéma : `npm run api:generate` (SDK .NET 10 requis). Le [catalogue sourcé](UBER_EATS_API_CATALOG.md) et la [comparaison des clients non officiels](UBER_EATS_UNOFFICIAL_CLIENTS.md) précisent la provenance et les limites.
+
+## Notes des restaurants
+
+Sur les pages de catalogue `/feed`, de recherche `/search` et sur les fiches `/store/...`, un badge vert **Déjà commandé** apparaît sur les restaurants présents dans l’historique. Sur une fiche, il se trouve près du nom du restaurant. Cliquer sur ce badge ouvre leurs commandes dans le panneau sans naviguer vers le restaurant. Le rapprochement utilise l’identifiant du restaurant, jamais son nom. L’historique est parcouru progressivement en arrière-plan, y compris ses pages anciennes ; les cartes ajoutées pendant la navigation sont aussi marquées. Les données et les pages déjà lues restent uniquement en mémoire dans l’onglet et sont réutilisées par le panneau.
+
+La note moyenne des clients et le nombre d'avis apparaissent sous le nom du restaurant. Ouvrir ses commandes pour consulter **Votre note** : cinq étoiles vides pour une commande sans note, ou les étoiles de l'évaluation déjà reçue d'Uber Eats. Un clic sur une étoile envoie la note choisie à Uber Eats pour cette commande ; le message de succès et les étoiles enregistrées apparaissent après acceptation du serveur. Un échec conserve la note précédente et permet de réessayer.
+
+L'en-tête du restaurant affiche également **Votre note** si une seule commande chargée est notée, ou **Votre moyenne** si plusieurs le sont. Seules les notes personnelles connues des commandes chargées entrent dans le calcul : les commandes sans note ne valent pas zéro. La moyenne se met à jour après un envoi réussi, une actualisation ou le chargement de commandes supplémentaires ; le nombre de notes chargées est indiqué lorsqu'il y en a plusieurs.
+
+Pour une commande qu'Uber Eats ne permet plus de noter, aucune section de notation n'est affichée sauf si une note existe déjà : celle-ci reste visible en lecture seule. Si une note n'est pas disponible dans la réponse d'une commande encore éligible, le panneau le signale sans inventer de valeur. Le formulaire est relu au clic pour vérifier la commande, le restaurant et les valeurs proposées. Aucun pourboire ni avis sur le livreur n'est inclus dans cet envoi. Les notes sont conservées par Uber Eats, sans stockage local dans l'extension.
 
 ## Versionnement
 

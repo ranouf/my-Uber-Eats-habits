@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { chromium, expect, test } from "@playwright/test";
 
-import { collectOrders, groupRestaurants } from "../src/orders.js";
+import { groupRestaurants } from "../src/orders.js";
 
 const root = path.resolve(".");
 const { version } = JSON.parse(readFileSync("manifest.json", "utf8"));
@@ -38,63 +38,187 @@ main > div { padding:24px 0; border-bottom:1px solid #eee; } main a { color:#000
   </div>
 </main></body></html>`;
 
+const apiOrders = [
+  {
+    id: "order-3",
+    store: "a",
+    date: "2026-10-25T23:05:00Z",
+    total: "42,50 $",
+    items: [
+      [2, "Soupe à l’oignon"],
+      [1, "Salade verte"],
+    ],
+  },
+  {
+    id: "order-2",
+    store: "b",
+    date: "2026-10-20T22:30:00Z",
+    total: "36,00 $",
+    items: [
+      [1, "Pad thaï"],
+      [1, "Riz sauté"],
+    ],
+  },
+  {
+    id: "order-1",
+    store: "a",
+    date: "2026-09-12T23:00:00Z",
+    total: "18,50 $",
+    items: [[1, "Soupe à l’oignon"]],
+  },
+];
+const feedFixture = fixture.replace(
+  /<main>[\s\S]*<\/main>/,
+  `<main><h1>Vos restaurants à proximité</h1>
+  <div class="feed-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px">
+    <a data-testid="store-card" href="/ca-fr/store/la-cantine/AAAAAAAAAAAAAAAAAAAAAQ"><div style="height:150px;background:#e8ede7;border-radius:12px"></div><h2>La Cantine</h2><p>4,6 ★ · 20 min</p></a>
+    <a data-testid="store-card" href="/ca-fr/store/maison-bangkok/00000000-0000-0000-0000-000000000002"><div style="height:150px;background:#f0e9df;border-radius:12px"></div><h2>Maison Bangkok</h2><p>4,2 ★ · 25 min</p></a>
+    <a data-testid="store-card" href="/ca-fr/store/autre-cantine/00000000-0000-0000-0000-000000000003"><div style="height:150px;background:#e8e8e8;border-radius:12px"></div><h2>La Cantine</h2><p>Nouveau restaurant</p></a>
+  </div></main>`,
+);
+const storeFixture = fixture.replace(
+  /<main>[\s\S]*<\/main>/,
+  `<main>
+  <div style="height:180px;background:#e8ede7;border-radius:16px"></div>
+  <h1>La Cantine</h1><p>4,6 ★ · 1200 avis</p><p>Livraison · 20 min</p>
+  <h2>Articles en vedette</h2><p>Soupe à l’oignon · Salade verte</p></main>`,
+);
+function apiResponse(orders, hasMore) {
+  return {
+    status: "success",
+    data: {
+      orderUuids: orders.map((order) => order.id),
+      ordersMap: Object.fromEntries(
+        orders.map((order) => [
+          order.id,
+          {
+            baseEaterOrder: {
+              uuid: order.id,
+              lastStateChangeAt: order.date,
+              shoppingCart: {
+                items: order.items.map(([quantity, title]) => ({ quantity, title })),
+              },
+            },
+            storeInfo: {
+              uuid:
+                order.store === "a"
+                  ? "00000000-0000-0000-0000-000000000001"
+                  : "00000000-0000-0000-0000-000000000002",
+              title: order.store === "a" ? "La Cantine" : "Maison Bangkok",
+              slug: order.store === "a" ? "la-cantine" : "maison-bangkok",
+              rating: order.id === "order-1" ? [true, true, true, true, false] : null,
+            },
+            ratingInfo: {
+              isRatable: order.id === "order-3" || order.id === "order-0",
+              userRatings: [],
+            },
+            fareInfo: { checkoutInfo: [{ key: "eats_fare.total", formattedValue: order.total }] },
+          },
+        ]),
+      ),
+      paginationData: { nextCursor: "unused-server-cursor" },
+      meta: { hasMore },
+    },
+  };
+}
 let context;
-let orders;
-
 test.beforeAll(async () => {
   context = await chromium.launchPersistentContext(path.join(root, ".codex/browser-tests"), {
     channel: "chromium",
     headless: true,
+    timezoneId: "America/Toronto",
     args: [`--disable-extensions-except=${root}`, `--load-extension=${root}`],
   });
-  const page = await context.newPage();
-  await page.goto("chrome://extensions/");
-  const extension = page.locator("extensions-item").filter({ hasText: "UberEatHabits" });
-  await expect(extension).toHaveCount(1);
-  await context.route("https://www.ubereats.com/**", (route) =>
-    route.fulfill({ body: fixture, contentType: "text/html" }),
-  );
-  await page.goto("https://www.ubereats.com/orders");
-  orders = await page.evaluate(collectOrders);
-  await page.close();
+  await context.route("https://www.ubereats.com/**", async (route) => {
+    const request = route.request();
+    const operation = new URL(request.url()).pathname.split("/").at(-1);
+    if (operation === "getStoreV1") {
+      const isFirstStore = request.postDataJSON().storeUuid.endsWith("1");
+      return route.fulfill({
+        json: {
+          status: "success",
+          data: {
+            rating: isFirstStore
+              ? { ratingValue: 4.6, reviewCount: 1200 }
+              : { ratingValue: 4.2, reviewCount: 23 },
+          },
+        },
+      });
+    }
+    if (operation === "getPendingRatingV1") {
+      const { orderUuid } = request.postDataJSON();
+      return route.fulfill({
+        json: {
+          status: "success",
+          data: {
+            workflowUUID: orderUuid,
+            ratingInputPagesOrder: { storeRatingPage: "store" },
+            ratingInputPagesMap: {
+              store: {
+                type: "STORE_RATING",
+                uuid: "00000000-0000-0000-0000-000000000001",
+                identifiers: ["ONE_STAR", "TWO_STAR", "THREE_STAR", "FOUR_STAR", "FIVE_STAR"],
+              },
+            },
+          },
+        },
+      });
+    }
+    if (new URL(request.url()).pathname === "/_p/api/getPastOrdersV1") {
+      expect(request.method()).toBe("POST");
+      expect(request.headers()["x-csrf-token"]).toBe("x");
+      const { lastWorkflowUUID } = request.postDataJSON();
+      expect(["", "order-1"]).toContain(lastWorkflowUUID);
+      return route.fulfill({
+        json: lastWorkflowUUID
+          ? apiResponse([apiOrders[2], { ...apiOrders[2], id: "order-0" }], false)
+          : apiResponse(apiOrders, false),
+      });
+    }
+    return route.fulfill({
+      contentType: "text/html",
+      body: new URL(request.url()).pathname.endsWith("/orders")
+        ? fixture
+        : new URL(request.url()).pathname.includes("/store/")
+          ? storeFixture
+          : feedFixture,
+    });
+  });
 });
-
 test.afterAll(async () => {
   await context?.close();
 });
 
-test("extrait les commandes passées et conserve les restaurants dans l'ordre de récence", () => {
-  expect(orders).toHaveLength(3);
-  expect(orders[0]).toMatchObject({
-    restaurant: "La Cantine",
-    date: "Oct 25 at 7:05 PM",
-    total: "3 items for CA$42.50",
-    items: ["2 × Soupe à l’oignon", "1 × Salade verte"],
-  });
-  expect(orders[1]).toMatchObject({ date: "Oct 20 at 6:30 PM", total: "2 items for CA$36.00" });
-  const grouped = groupRestaurants([...orders, orders[0]]);
-  expect(grouped.map((restaurant) => restaurant.name)).toEqual(["La Cantine", "Maison Bangkok"]);
-  expect(grouped[0].orders.map((order) => order.id)).toEqual(["order-3", "order-1"]);
+test("regroupe les commandes et élimine les doublons sans changer leur ordre", () => {
+  const orders = [
+    { id: "3", restaurantId: "a", restaurant: "La Cantine", restaurantUrl: "/a" },
+    { id: "2", restaurantId: "b", restaurant: "Maison Bangkok", restaurantUrl: "/b" },
+    { id: "1", restaurantId: "a", restaurant: "La Cantine", restaurantUrl: "/a" },
+  ];
+  const restaurants = groupRestaurants([...orders, orders[0]]);
+  expect(restaurants.map((restaurant) => restaurant.name)).toEqual([
+    "La Cantine",
+    "Maison Bangkok",
+  ]);
+  expect(restaurants[0].orders.map((order) => order.id)).toEqual(["3", "1"]);
 });
 
-test("affiche les dernières commandes par restaurant et filtre la liste", async () => {
+test("affiche les commandes API dans le panneau et filtre les restaurants", async () => {
   const page = await context.newPage();
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto("https://www.ubereats.com/orders");
-  await expect(
-    page.getByRole("complementary", { name: "UberEatHabits — Mes restaurants" }),
-  ).toBeVisible();
+  await page.goto("https://www.ubereats.com/ca-fr/orders");
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
   await expect(page.locator(".panel .version")).toHaveText(`v${version}`);
-  await expect(page.locator(".restaurant-name")).toHaveText(["La Cantine", "Maison Bangkok"]);
   await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
-  await expect(page.locator("details[open] .order-date")).toHaveText([
-    "Oct 25 at 7:05 PM",
-    "Sep 12 at 7:00 PM",
+  await expect(page.locator("details[open] .order-total")).toHaveText(["42,50 $", "18,50 $"]);
+  await expect(page.locator("details[open] .items li")).toHaveText([
+    "2 × Soupe à l’oignon",
+    "1 × Salade verte",
+    "1 × Soupe à l’oignon",
   ]);
   await expect(page.getByRole("link", { name: "Voir le reçu ↗" }).first()).toHaveAttribute(
     "href",
-    /modctx=order-3/,
+    /\/ca-fr\/orders\?mod=orderReceipt&modctx=order-3$/,
   );
   await page.screenshot({ path: ".codex/panel-desktop.png" });
   await page.getByRole("searchbox").fill("bangkok");
@@ -104,54 +228,340 @@ test("affiche les dernières commandes par restaurant et filtre la liste", async
   await page.close();
 });
 
-test("ouvre le panneau depuis le site et guide vers l'historique", async () => {
+test("charge les commandes depuis l’accueil français sans naviguer vers l’historique", async () => {
   const page = await context.newPage();
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto("https://www.ubereats.com/feed");
+  const request = page.waitForRequest((request) => request.url().includes("/getPastOrdersV1"));
+  await page.goto("https://www.ubereats.com/ca-fr/feed?diningMode=DELIVERY&pl=test");
+  await expect(page.locator('main a[href*="mod=orderReceipt"]')).toHaveCount(0);
   await expect(page.locator(".launcher .version")).toHaveText(`v${version}`);
   await page.locator(".launcher").screenshot({ path: ".codex/panel-launcher.png" });
   await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("Ouvrez votre historique");
-  await expect(page.getByRole("link", { name: /Ouvrir mon historique/ })).toHaveAttribute(
-    "href",
-    "https://www.ubereats.com/orders",
-  );
-  await page.getByRole("button", { name: "Fermer le panneau" }).click();
-  await expect(page.getByRole("button", { name: "Mes restaurants", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
-  await page.getByRole("link", { name: /Ouvrir mon historique/ }).click();
+  expect(new URL((await request).url()).searchParams.get("localeCode")).toBe("ca-fr");
+  await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
+  await expect(page).toHaveURL(/\/ca-fr\/feed\?/);
+  await expect(page.getByRole("link", { name: /Ouvrir mon historique/ })).toBeHidden();
+  await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
+  await page.screenshot({ path: ".codex/panel-feed.png" });
+  await page.close();
+});
+
+test("pagine avec le dernier identifiant et conserve le restaurant ouvert", async () => {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 390, height: 350 });
+  const cursors = [];
+  let finishLoading;
+  const loadingPage = new Promise((resolve) => {
+    finishLoading = resolve;
+  });
+  await page.route("**/_p/api/getPastOrdersV1?*", async (route) => {
+    const { lastWorkflowUUID } = route.request().postDataJSON();
+    cursors.push(lastWorkflowUUID);
+    if (lastWorkflowUUID) await loadingPage;
+    return route.fulfill({
+      json: lastWorkflowUUID
+        ? apiResponse([apiOrders[2], { ...apiOrders[2], id: "order-0" }], false)
+        : apiResponse(apiOrders, true),
+    });
+  });
+  await page.goto("https://www.ubereats.com/orders");
+  await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
+  await page.locator(".load-sentinel").scrollIntoViewIfNeeded();
+  const spinner = page.getByRole("progressbar", {
+    name: "Chargement des commandes plus anciennes",
+  });
+  await expect(spinner).toBeVisible();
+  await spinner.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: ".codex/panel-spinner-mobile.png" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await spinner.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: ".codex/panel-spinner-desktop.png" });
+  finishLoading();
+  await expect(page.getByRole("status")).toHaveText("2 restaurants · 4 commandes chargées");
+  await expect(spinner).toBeHidden();
+  await expect(page.locator("details[open] .order")).toHaveCount(3);
+  expect(cursors).toEqual(["", "order-1"]);
+  await page.screenshot({ path: ".codex/panel-lazy-loading.png" });
+  await page.setViewportSize({ width: 390, height: 350 });
+  await page.getByRole("button", { name: "Actualiser les commandes" }).click();
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
   await page.close();
 });
 
-test("actualise les commandes chargées sans perdre le restaurant ouvert", async () => {
-  const page = await context.newPage();
-  await page.goto("https://www.ubereats.com/orders");
-  await page.getByText("La Cantine", { exact: true }).last().click();
-  await page.evaluate(() => {
-    const card = document
-      .querySelector('a[href*="modctx=order-1"]')
-      .closest("main > div")
-      .cloneNode(true);
-    card.querySelector('a[href*="modctx="]').href = "/orders?mod=orderReceipt&modctx=order-0";
-    document.querySelector("main").append(card);
-  });
-  await expect(page.getByRole("status")).toHaveText("2 restaurants · 4 commandes chargées");
-  await expect(page.locator("details[open] .order")).toHaveCount(3);
-  await page.close();
-});
-
-test("affiche un panneau utilisable sur mobile et le ferme au clavier", async () => {
+test("affiche le panneau sur mobile et le ferme au clavier", async () => {
   const page = await context.newPage();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("https://www.ubereats.com/orders");
+  await page.goto("https://www.ubereats.com/ca-fr/orders");
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
-  await page.getByText("La Cantine", { exact: true }).last().click();
-  const panel = page.getByRole("complementary", { name: "UberEatHabits — Mes restaurants" });
+  await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
+  const panel = page.getByRole("complementary", { name: "Uber Eats Habits — Mes restaurants" });
   expect((await panel.boundingBox()).width).toBe(390);
   await page.screenshot({ path: ".codex/panel-mobile.png" });
   await page.getByRole("button", { name: "Fermer le panneau" }).focus();
   await page.keyboard.press("Escape");
   await expect(panel).toBeHidden();
+  await page.close();
+});
+
+test("marque les cartes par identifiant et ouvre les commandes sans quitter le catalogue", async () => {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  let releaseOlder;
+  const olderPage = new Promise((resolve) => {
+    releaseOlder = resolve;
+  });
+  await page.route("**/_p/api/getPastOrdersV1?*", async (route) => {
+    const { lastWorkflowUUID } = route.request().postDataJSON();
+    if (!lastWorkflowUUID) return route.fulfill({ json: apiResponse(apiOrders, true) });
+    expect(lastWorkflowUUID).toBe("order-1");
+    await olderPage;
+    const response = apiResponse([{ ...apiOrders[2], id: "order-0" }], false);
+    response.data.ordersMap["order-0"].storeInfo = {
+      uuid: "00000000-0000-0000-0000-000000000004",
+      title: "Ancienne adresse",
+      slug: "ancienne-adresse",
+      rating: null,
+    };
+    return route.fulfill({ json: response });
+  });
+  await page.goto("https://www.ubereats.com/ca-fr/feed?diningMode=DELIVERY");
+  const cantine = page.getByRole("button", {
+    name: "Voir mes commandes chez La Cantine",
+    exact: true,
+  });
+  await expect(cantine).toBeVisible();
+  await expect(page.locator('[href*="autre-cantine"] button')).toHaveCount(0);
+  await expect(page.locator(".panel")).toBeHidden();
+  await page.evaluate(() => {
+    const card = document.createElement("a");
+    card.dataset.testid = "store-card";
+    card.href = "/ca-fr/store/ancienne-adresse/00000000-0000-0000-0000-000000000004";
+    card.textContent = "Ancienne adresse";
+    document.querySelector(".feed-cards").append(card);
+  });
+  const olderBadge = page.getByRole("button", { name: "Voir mes commandes chez Ancienne adresse" });
+  await expect(olderBadge).toHaveCount(0);
+  releaseOlder();
+  await expect(olderBadge).toBeVisible();
+  await page.screenshot({ path: ".codex/feed-badges-desktop.png" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await cantine.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: ".codex/feed-badges-mobile.png" });
+  await cantine.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/ca-fr\/feed\?diningMode=DELIVERY$/);
+  await expect(page.locator(".panel .restaurant-name")).toHaveText(["La Cantine"]);
+  await expect(page.locator("details[open] .order")).toHaveCount(2);
+  await expect(page.getByRole("status")).toHaveText("2 commandes chez ce restaurant");
+  await page.screenshot({ path: ".codex/feed-restaurant-orders-mobile.png" });
+  await page.getByRole("button", { name: "Fermer le panneau" }).click();
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await olderBadge.click();
+  await expect(page.locator(".panel .restaurant-name")).toHaveText(["Ancienne adresse"]);
+  await expect(page.locator("details[open] .order")).toHaveCount(1);
+  await expect(page.getByRole("status")).toHaveText("1 commande chez ce restaurant");
+  await page.getByRole("button", { name: "Fermer le panneau" }).click();
+  await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("restaurants ·");
+  await expect(
+    page.locator(".panel .restaurant-name").filter({ hasText: "La Cantine" }),
+  ).toBeVisible();
+  await page.close();
+});
+
+test("affiche le badge sur la fiche et le met à jour en changeant de restaurant", async () => {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("https://www.ubereats.com/ca-fr/store/la-cantine/AAAAAAAAAAAAAAAAAAAAAQ");
+  const badge = page.getByRole("button", {
+    name: "Voir mes commandes chez La Cantine",
+    exact: true,
+  });
+  await expect(badge).toBeVisible();
+  await expect(page.locator("h1 + [data-habits-detail-badge]")).toHaveCount(1);
+  await page.screenshot({ path: ".codex/feed-store-badge-desktop.png" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: ".codex/feed-store-badge-mobile.png" });
+  await badge.click();
+  await expect(page).toHaveURL(/\/store\/la-cantine\/AAAAAAAAAAAAAAAAAAAAAQ$/);
+  await expect(page.locator(".panel .restaurant-name")).toHaveText(["La Cantine"]);
+  await expect(page.locator("details[open] .order")).toHaveCount(2);
+  await page.screenshot({ path: ".codex/feed-store-orders-mobile.png" });
+  await page.getByRole("button", { name: "Fermer le panneau" }).click();
+  await page.evaluate(() => {
+    history.pushState({}, "", "/ca-fr/store/autre-cantine/00000000-0000-0000-0000-000000000003");
+    document.querySelector("h1").textContent = "La Cantine";
+  });
+  await expect(page.locator("[data-habits-detail-badge]")).toHaveCount(0);
+  await page.evaluate(() => {
+    history.pushState({}, "", "/ca-fr/store/maison-bangkok/00000000-0000-0000-0000-000000000002");
+    document.querySelector("h1").textContent = "Maison Bangkok";
+  });
+  const nextBadge = page.getByRole("button", { name: "Voir mes commandes chez Maison Bangkok" });
+  await expect(nextBadge).toBeVisible();
+  await expect(page.locator("[data-habits-detail-badge]")).toHaveCount(1);
+  await nextBadge.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".panel .restaurant-name")).toHaveText(["Maison Bangkok"]);
+  await expect(page.locator("details[open] .order")).toHaveCount(1);
+  await page.close();
+});
+
+test("distingue une session expirée d’un historique vide et permet de réessayer", async () => {
+  const page = await context.newPage();
+  await page.route("**/_p/api/getPastOrdersV1?*", (route) =>
+    route.fulfill({ status: 401, json: { status: "failure" } }),
+  );
+  await page.goto("https://www.ubereats.com/ca-fr/orders");
+  await expect(page.getByRole("status")).toContainText("Reconnectez-vous");
+  await expect(page.locator(".restaurant")).toHaveCount(0);
+  await page.unroute("**/_p/api/getPastOrdersV1?*");
+  await page.getByRole("button", { name: "Actualiser les commandes" }).click();
+  await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
+  await page.close();
+});
+
+test("affiche explicitement un historique vide sans pagination", async () => {
+  const page = await context.newPage();
+  await page.route("**/_p/api/getPastOrdersV1?*", (route) =>
+    route.fulfill({ json: apiResponse([], false) }),
+  );
+  await page.goto("https://www.ubereats.com/ca-fr/orders");
+  await expect(page.getByRole("status")).toHaveText(
+    "Aucune commande passée dans votre historique Uber Eats.",
+  );
+  await expect(page.getByRole("button", { name: "Charger plus de commandes" })).toBeHidden();
+  await page.close();
+});
+
+test("affiche les notes publiques et personnelles, puis envoie et relit la note choisie", async () => {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  let savedRating;
+  let submission;
+  let acknowledge;
+  const acknowledged = new Promise((resolve) => {
+    acknowledge = resolve;
+  });
+  await page.route("**/_p/api/getPastOrdersV1?*", (route) => {
+    const response = apiResponse(apiOrders, false);
+    if (savedRating) {
+      response.data.ordersMap["order-3"].storeInfo.rating = [true, true, true, false, false];
+      response.data.ordersMap["order-3"].ratingInfo.isRatable = false;
+    }
+    return route.fulfill({ json: response });
+  });
+  await page.route("**/_p/api/submitRatingV1?*", async (route) => {
+    submission = route.request().postDataJSON();
+    await acknowledged;
+    savedRating = submission.ratingItems[0];
+    await route.fulfill({ json: { status: "success", data: {} } });
+  });
+  await page.goto("https://www.ubereats.com/ca-fr/feed");
+  await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
+  await expect(page.locator(".public-rating").first()).toContainText("4,6 / 5 · 1200 avis");
+  await expect(page.locator(".public-rating").last()).toContainText("4,2 / 5 · 23 avis");
+  await expect(page.locator(".personal-average")).toHaveText(["Votre note : ★ 4,0 / 5"]);
+  await page.locator(".restaurant-name").filter({ hasText: "Maison Bangkok" }).click();
+  await expect(page.locator("details[open] .personal-rating")).toHaveCount(0);
+  await page.screenshot({ path: ".codex/panel-rating-ineligible.png" });
+  await page.locator(".restaurant-name").filter({ hasText: "Maison Bangkok" }).click();
+  await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
+  const latest = page.locator("details[open] .personal-rating").first();
+  const previous = page.locator("details[open] .personal-rating").last();
+  await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
+  await expect(page.locator(".personal-average")).toHaveText(["Votre note : ★ 4,0 / 5"]);
+  await expect(previous.locator("button")).toHaveText(["★", "★", "★", "★", "☆"]);
+  await expect(previous.getByRole("button", { name: "Mettre 5 étoiles" })).toBeDisabled();
+  await expect(previous.locator(".rating-help")).toHaveCount(0);
+  expect(submission).toBeUndefined();
+  await latest.getByRole("button", { name: "Mettre 3 étoiles" }).click();
+  await expect(latest.getByText("Envoi de votre note à Uber Eats…")).toBeVisible();
+  await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
+  await expect.poll(() => submission).not.toBeUndefined();
+  expect(submission).toEqual({
+    workflowUUID: "order-3",
+    entryPoint: "order_page",
+    ratingItems: [
+      {
+        uuid: "00000000-0000-0000-0000-000000000001",
+        value: "THREE_STAR",
+        schema: "FIVE_STARS",
+        subjectType: "STORE",
+      },
+    ],
+  });
+  acknowledge();
+  await expect(latest.getByText("Note envoyée à Uber Eats.")).toBeVisible();
+  await expect(latest.locator("button")).toHaveText(["★", "★", "★", "☆", "☆"]);
+  await expect(page.locator(".personal-average")).toHaveText([
+    "Votre moyenne : ★ 3,5 / 5 · 2 notes chargées",
+  ]);
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.screenshot({ path: ".codex/panel-ratings-desktop.png" });
+  await page.setViewportSize({ width: 390, height: 1000 });
+  await page.screenshot({ path: ".codex/panel-ratings-mobile.png" });
+  await page.getByRole("button", { name: "Actualiser les commandes" }).click();
+  await expect(page.locator(".restaurant-name").first()).toBeVisible();
+  await page.locator(".restaurant-name").first().click();
+  await expect(page.locator("details[open] .personal-rating").first().locator("button")).toHaveText(
+    ["★", "★", "★", "☆", "☆"],
+  );
+  await expect(page.locator(".personal-average")).toHaveText([
+    "Votre moyenne : ★ 3,5 / 5 · 2 notes chargées",
+  ]);
+  await page.close();
+});
+
+test("un échec d’envoi ne remplace pas la note affichée", async () => {
+  const page = await context.newPage();
+  await page.route("**/_p/api/submitRatingV1?*", (route) =>
+    route.fulfill({ status: 500, json: { status: "failure" } }),
+  );
+  await page.goto("https://www.ubereats.com/ca-fr/orders");
+  await page.locator(".restaurant-name").first().click();
+  const latest = page.locator("details[open] .personal-rating").first();
+  await latest.getByRole("button", { name: "Mettre 5 étoiles" }).click();
+  await expect(latest.locator(".rating-message")).toContainText("ne peut pas traiter la demande");
+  await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
+  await expect(page.locator(".personal-average")).toHaveText(["Votre note : ★ 4,0 / 5"]);
+  await expect(latest.getByRole("button", { name: "Mettre 5 étoiles" })).toBeEnabled();
+  await page.close();
+});
+
+test("n’envoie aucune note si la commande est inéligible ou si le formulaire ne correspond pas", async () => {
+  const page = await context.newPage();
+  const submissions = [];
+  page.on("request", (request) => {
+    if (request.url().includes("/submitRatingV1")) submissions.push(request);
+  });
+  let ineligible = false;
+  await page.route("**/_p/api/getPendingRatingV1?*", (route) =>
+    route.fulfill({
+      json: {
+        status: "success",
+        data: !ineligible
+          ? {
+              workflowUUID: "another-order",
+              ratingInputPagesOrder: { storeRatingPage: "store" },
+              ratingInputPagesMap: {
+                store: { type: "STORE_RATING", uuid: "another-store", identifiers: ["ONE_STAR"] },
+              },
+            }
+          : null,
+      },
+    }),
+  );
+  await page.goto("https://www.ubereats.com/ca-fr/orders");
+  await page.locator(".restaurant-name").first().click();
+  const latest = page.locator("details[open] .personal-rating").first();
+  await latest.getByRole("button", { name: "Mettre 1 étoile", exact: true }).click();
+  await expect(latest.locator(".rating-message")).toContainText("formulaire de cette commande");
+  ineligible = true;
+  await latest.getByRole("button", { name: "Mettre 1 étoile", exact: true }).click();
+  await expect(
+    page.locator("details[open] .order").first().locator(".personal-rating"),
+  ).toHaveCount(0);
+  expect(submissions).toHaveLength(0);
   await page.close();
 });

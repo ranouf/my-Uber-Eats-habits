@@ -13,7 +13,7 @@ function link(text, url) {
   return node;
 }
 
-function renderOrder(order) {
+function renderOrder(order, onRate) {
   const node = element("li", "order");
   const header = element("div", "order-header");
   header.append(
@@ -21,13 +21,44 @@ function renderOrder(order) {
     link("Voir le reçu ↗", order.receiptUrl),
   );
   node.append(header, element("p", "order-total", order.total));
+  if (order.canRate || order.personalRating > 0) {
+    const rating = element("div", "personal-rating");
+    rating.append(element("p", "rating-label", "Votre note"));
+    const stars = element("div", "rating-stars");
+    stars.setAttribute("role", "group");
+    stars.dataset.orderId = order.id;
+    stars.setAttribute("aria-label", `Votre note pour la commande du ${order.date}`);
+    for (let value = 1; value <= 5; value++) {
+      const button = element("button", "rating-star", order.personalRating >= value ? "★" : "☆");
+      button.type = "button";
+      button.dataset.value = String(value);
+      button.setAttribute("aria-label", `Mettre ${value} étoile${value > 1 ? "s" : ""}`);
+      button.setAttribute("aria-pressed", String(order.personalRating === value));
+      button.disabled = !order.canRate || Boolean(order.ratingBusy);
+      button.addEventListener("click", () => onRate(order, value));
+      stars.append(button);
+    }
+    rating.append(stars);
+    if (order.canRate) {
+      rating.append(
+        element("p", "rating-help", "Un clic envoie votre note à Uber Eats pour cette commande."),
+      );
+    }
+    if (order.personalRating === null) {
+      rating.append(element("p", "rating-help", "Votre note existante n’est pas disponible."));
+    }
+    const ratingStatus = element("p", "rating-message", order.ratingMessage);
+    ratingStatus.setAttribute("aria-live", "polite");
+    rating.append(ratingStatus);
+    node.append(rating);
+  }
   const items = element("ul", "items");
   for (const item of order.items) items.append(element("li", "", item));
   node.append(items);
   return node;
 }
 
-export function renderRestaurants(results, restaurants, query) {
+export function renderRestaurants(results, restaurants, query, onRate) {
   const openIds = new Set(
     [...results.querySelectorAll("details[open]")].map((card) => card.dataset.id),
   );
@@ -44,12 +75,39 @@ export function renderRestaurants(results, restaurants, query) {
     label.append(
       element("strong", "restaurant-name", restaurant.name),
       element("span", "last-order", restaurant.orders[0].date),
+      element(
+        "span",
+        "public-rating",
+        restaurant.publicRating?.ratingValue != null
+          ? `Clients : ★ ${restaurant.publicRating.ratingValue.toLocaleString("fr-CA", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} / 5 · ${restaurant.publicRating.reviewCount} avis`
+          : restaurant.ratingLoaded
+            ? "Note des clients indisponible"
+            : "Chargement de la note des clients…",
+      ),
     );
+    const ratedOrders = restaurant.orders.filter((order) => order.personalRating > 0);
+    if (ratedOrders.length) {
+      const average =
+        ratedOrders.reduce((sum, order) => sum + order.personalRating, 0) / ratedOrders.length;
+      const value = average.toLocaleString("fr-CA", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      });
+      label.append(
+        element(
+          "span",
+          "public-rating personal-average",
+          ratedOrders.length === 1
+            ? `Votre note : ★ ${value} / 5`
+            : `Votre moyenne : ★ ${value} / 5 · ${ratedOrders.length} notes chargées`,
+        ),
+      );
+    }
     summary.append(label, element("span", "count", String(restaurant.orders.length)));
     const content = element("div", "restaurant-content");
     content.append(link("Voir le restaurant ↗", restaurant.url));
     const orders = element("ol", "orders");
-    for (const order of restaurant.orders) orders.append(renderOrder(order));
+    for (const order of restaurant.orders) orders.append(renderOrder(order, onRate));
     content.append(orders);
     card.append(summary, content);
     results.append(card);
@@ -59,7 +117,8 @@ export function renderRestaurants(results, restaurants, query) {
   }
 }
 
-export function createPanel(version) {
+export function createPanel() {
+  const { version } = chrome.runtime.getManifest();
   const host = element("div", "");
   host.id = "uber-eat-habits-extension";
   const shadow = host.attachShadow({ mode: "open" });
@@ -72,9 +131,9 @@ export function createPanel(version) {
     <button class="launcher" type="button" aria-label="Mes restaurants" aria-expanded="false" aria-controls="habits-panel">
       <span class="launcher-icon" aria-hidden="true">↺</span><span class="launcher-label">Mes restaurants<small class="version">v${version}</small></span>
     </button>
-    <aside id="habits-panel" class="panel" aria-label="UberEatHabits — Mes restaurants" hidden>
+    <aside id="habits-panel" class="panel" aria-label="Uber Eats Habits — Mes restaurants" hidden>
       <header class="panel-header">
-        <div><div class="brand-row"><span class="brand">UberEat<span>Habits</span></span><small class="version">v${version}</small></div><h2>Mes restaurants</h2></div>
+        <div><div class="brand-row"><span class="brand">Uber Eats <span>Habits</span></span><small class="version">v${version}</small></div><h2>Mes restaurants</h2></div>
         <button class="icon-button close" type="button" aria-label="Fermer le panneau">×</button>
       </header>
       <div class="panel-body">
@@ -84,10 +143,12 @@ export function createPanel(version) {
         <label for="restaurant-search" class="sr-only">Rechercher un restaurant</label>
         <input id="restaurant-search" type="search" placeholder="Rechercher un restaurant" hidden />
         <section class="restaurants" aria-label="Restaurants récemment commandés"></section>
-        <p class="notice">Du plus récent au plus ancien. Seules les commandes chargées sur Uber Eats sont affichées. Utilisez « Show more » ou « Afficher plus » sur le site pour remonter davantage dans l’historique.</p>
-        <p class="notice">Les articles visibles sont un aperçu. Ouvrez le reçu pour le détail complet.</p>
+        <div class="load-sentinel" aria-hidden="true"></div>
+        <div class="pagination-loading" role="progressbar" aria-label="Chargement des commandes plus anciennes" hidden><span class="spinner" aria-hidden="true"></span><span>Chargement des commandes plus anciennes…</span></div>
+        <p class="notice">Du plus récent au plus ancien. Les commandes plus anciennes se chargent automatiquement en bas de la liste.</p>
+        <p class="notice">Ouvrez le reçu pour consulter les détails et les personnalisations des articles.</p>
       </div>
-      <footer>Lecture locale · Aucune donnée enregistrée ni transmise</footer>
+      <footer>Historique et notes Uber Eats · Aucun stockage local</footer>
     </aside>`;
   shadow.append(content);
   document.body.append(host);
