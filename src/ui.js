@@ -143,8 +143,8 @@ export function createPanel() {
         <label for="restaurant-search" class="sr-only">Rechercher un restaurant</label>
         <input id="restaurant-search" type="search" placeholder="Rechercher un restaurant" hidden />
         <section class="restaurants" aria-label="Restaurants récemment commandés"></section>
-        <button class="primary load-more" type="button" hidden>Charger plus de commandes</button>
-        <p class="notice">Du plus récent au plus ancien. L’historique est lu directement depuis votre compte Uber Eats. Chargez plus de commandes pour remonter dans le temps.</p>
+        <div class="load-sentinel" aria-hidden="true"></div>
+        <p class="notice">Du plus récent au plus ancien. Les commandes plus anciennes se chargent automatiquement en bas de la liste.</p>
         <p class="notice">Ouvrez le reçu pour consulter les détails et les personnalisations des articles.</p>
       </div>
       <footer>Historique et notes Uber Eats · Aucun stockage local</footer>

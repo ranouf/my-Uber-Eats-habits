@@ -158,7 +158,7 @@ test.beforeAll(async () => {
       return route.fulfill({
         json: lastWorkflowUUID
           ? apiResponse([apiOrders[2], { ...apiOrders[2], id: "order-0" }], false)
-          : apiResponse(apiOrders, true),
+          : apiResponse(apiOrders, false),
       });
     }
     return route.fulfill({
@@ -235,12 +235,25 @@ test("charge les commandes depuis l’accueil français sans naviguer vers l’h
 
 test("pagine avec le dernier identifiant et conserve le restaurant ouvert", async () => {
   const page = await context.newPage();
+  await page.setViewportSize({ width: 390, height: 350 });
+  const cursors = [];
+  await page.route("**/_p/api/getPastOrdersV1?*", (route) => {
+    const { lastWorkflowUUID } = route.request().postDataJSON();
+    cursors.push(lastWorkflowUUID);
+    return route.fulfill({
+      json: lastWorkflowUUID
+        ? apiResponse([apiOrders[2], { ...apiOrders[2], id: "order-0" }], false)
+        : apiResponse(apiOrders, true),
+    });
+  });
   await page.goto("https://www.ubereats.com/orders");
   await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
-  await page.getByRole("button", { name: "Charger plus de commandes" }).click();
+  expect(cursors).toEqual([""]);
+  await page.locator(".load-sentinel").scrollIntoViewIfNeeded();
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 4 commandes chargées");
   await expect(page.locator("details[open] .order")).toHaveCount(3);
-  await expect(page.getByRole("button", { name: "Charger plus de commandes" })).toBeHidden();
+  expect(cursors).toEqual(["", "order-1"]);
+  await page.screenshot({ path: ".codex/panel-lazy-loading.png" });
   await page.getByRole("button", { name: "Actualiser les commandes" }).click();
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
   await page.close();
@@ -298,7 +311,7 @@ test("affiche les notes publiques et personnelles, puis envoie et relit la note 
     acknowledge = resolve;
   });
   await page.route("**/_p/api/getPastOrdersV1?*", (route) => {
-    const response = apiResponse(apiOrders, true);
+    const response = apiResponse(apiOrders, false);
     if (savedRating) response.data.ordersMap["order-3"].ratingInfo.userRatings = [savedRating];
     return route.fulfill({ json: response });
   });

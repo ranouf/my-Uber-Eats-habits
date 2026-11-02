@@ -144,9 +144,8 @@ h2 {
 .primary:hover {
   background: #333;
 }
-.load-more {
-  width: 100%;
-  margin-top: 20px;
+.load-sentinel {
+  height: 1px;
 }
 button:disabled {
   cursor: wait;

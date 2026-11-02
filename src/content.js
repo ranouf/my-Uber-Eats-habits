@@ -13,12 +13,19 @@
   const results = shadow.querySelector(".restaurants");
   const historyLink = shadow.querySelector(".history-link");
   const refresh = shadow.querySelector(".refresh");
-  const more = shadow.querySelector(".load-more");
+  const sentinel = shadow.querySelector(".load-sentinel");
+  const pagination = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting && !panel.hidden) void load();
+    },
+    { root: shadow.querySelector(".panel-body"), rootMargin: "0px 0px 100px 0px" },
+  );
   let orders = [];
   let restaurants = [];
   let cursor = "";
   let loaded = false;
   let loading = false;
+  let hasMore = false;
   let previousPath;
   const publicRatings = new Map();
 
@@ -77,7 +84,7 @@
     if (loading) return;
     loading = true;
     refresh.disabled = true;
-    more.disabled = true;
+    pagination.unobserve(sentinel);
     status.textContent = "Chargement de votre historique Uber Eats…";
     if (reset) {
       orders = [];
@@ -85,7 +92,7 @@
       cursor = "";
       loaded = false;
       publicRatings.clear();
-      more.hidden = true;
+      hasMore = false;
       search.hidden = true;
       render();
     }
@@ -97,13 +104,14 @@
       restaurants = groupRestaurants(orders);
       search.hidden = !restaurants.length;
       historyLink.hidden = true;
-      more.hidden = !page.hasMore;
+      hasMore = page.hasMore;
       status.textContent = restaurants.length
         ? `${restaurants.length} restaurants · ${restaurants.reduce((sum, restaurant) => sum + restaurant.orders.length, 0)} commandes chargées`
         : "Aucune commande passée dans votre historique Uber Eats.";
       render();
       void loadPublicRatings();
     } catch (error) {
+      hasMore = false;
       status.textContent =
         error instanceof SyntaxError || error instanceof TypeError
           ? "Impossible de lire l’historique Uber Eats. Actualisez la page et réessayez."
@@ -111,7 +119,7 @@
     } finally {
       loading = false;
       refresh.disabled = false;
-      more.disabled = false;
+      if (hasMore && !panel.hidden) pagination.observe(sentinel);
     }
   }
 
@@ -122,7 +130,11 @@
     if (open) {
       close.focus({ preventScroll: true });
       if (!loaded) void load();
-    } else launcher.focus({ preventScroll: true });
+      else if (hasMore) pagination.observe(sentinel);
+    } else {
+      pagination.unobserve(sentinel);
+      launcher.focus({ preventScroll: true });
+    }
   }
 
   function updateRoute() {
@@ -142,7 +154,6 @@
   });
   search.addEventListener("input", render);
   refresh.addEventListener("click", () => void load(true));
-  more.addEventListener("click", () => void load());
   new MutationObserver(updateRoute).observe(document.body, { childList: true, subtree: true });
   updateRoute();
 })();
