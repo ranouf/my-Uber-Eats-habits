@@ -4,6 +4,7 @@
     chrome.runtime.getURL("src/ratings.js")
   );
   const { createPanel, renderRestaurants } = await import(chrome.runtime.getURL("src/ui.js"));
+  const { markOrderedRestaurants } = await import(chrome.runtime.getURL("src/cards.js"));
   const { shadow } = createPanel();
   const launcher = shadow.querySelector(".launcher");
   const panel = shadow.querySelector(".panel");
@@ -17,7 +18,7 @@
   const paginationLoading = shadow.querySelector(".pagination-loading");
   const pagination = new IntersectionObserver(
     ([entry]) => {
-      if (entry.isIntersecting && !panel.hidden) void load();
+      if (entry.isIntersecting && !panel.hidden && !selectedId) void load();
     },
     { root: shadow.querySelector(".panel-body"), rootMargin: "0px 0px 100px 0px" },
   );
@@ -29,9 +30,89 @@
   let hasMore = false;
   let previousPath;
   const publicRatings = new Map();
+  const historyPages = new Map();
+  const indexedOrders = new Map();
+  let indexedRestaurants = [];
+  let selectedId = null;
+  let indexRevision = 0;
+
+  function historyPage(cursor) {
+    if (!historyPages.has(cursor)) {
+      historyPages.set(
+        cursor,
+        loadOrderPage(cursor).catch((error) => {
+          historyPages.delete(cursor);
+          throw error;
+        }),
+      );
+    }
+    return historyPages.get(cursor);
+  }
+
+  function visibleRestaurants() {
+    return selectedId
+      ? indexedRestaurants.filter((restaurant) => restaurant.id === selectedId)
+      : restaurants;
+  }
+
+  function recordOrders(pageOrders) {
+    for (const order of pageOrders) indexedOrders.set(order.id, order);
+    indexedRestaurants = groupRestaurants([...indexedOrders.values()]);
+  }
+
+  function selectedSummary() {
+    const count = visibleRestaurants()[0].orders.length;
+    return `${count} commande${count > 1 ? "s" : ""} chez ce restaurant`;
+  }
+
+  function historySummary() {
+    return restaurants.length
+      ? `${restaurants.length} restaurants · ${restaurants.reduce((sum, restaurant) => sum + restaurant.orders.length, 0)} commandes chargées`
+      : "Aucune commande passée dans votre historique Uber Eats.";
+  }
+
+  function updateBadges() {
+    if (!/\/(?:feed|search)\/?$/.test(location.pathname)) return;
+    markOrderedRestaurants(indexedRestaurants, (id) => {
+      selectedId = id;
+      search.value = "";
+      search.hidden = false;
+      historyLink.hidden = true;
+      setOpen(true);
+      pagination.unobserve(sentinel);
+      render();
+      results.querySelector("details").open = true;
+      shadow.querySelector(".panel-body").scrollTop = 0;
+      status.textContent = selectedSummary();
+      void loadPublicRatings();
+    });
+  }
+
+  async function indexHistory() {
+    const revision = ++indexRevision;
+    let nextCursor = "";
+    try {
+      let page;
+      do {
+        page = await historyPage(nextCursor);
+        if (revision !== indexRevision) return;
+        recordOrders(page.orders);
+        updateBadges();
+        if (selectedId) {
+          render();
+          results.querySelector("details").open = true;
+          status.textContent = selectedSummary();
+          void loadPublicRatings();
+        }
+        nextCursor = page.cursor;
+      } while (page.hasMore);
+    } catch {
+      // Le chargement du panneau affiche les erreurs et permet de réessayer.
+    }
+  }
 
   function render() {
-    renderRestaurants(results, restaurants, search.value, rateOrder);
+    renderRestaurants(results, visibleRestaurants(), search.value, rateOrder);
   }
 
   async function rateOrder(order, stars) {
@@ -65,7 +146,7 @@
 
   async function loadPublicRatings() {
     await Promise.all(
-      restaurants.map(async (restaurant) => {
+      visibleRestaurants().map(async (restaurant) => {
         if (restaurant.publicRating?.ratingValue != null) return;
         try {
           if (!publicRatings.has(restaurant.id)) {
@@ -89,6 +170,11 @@
     pagination.unobserve(sentinel);
     status.textContent = "Chargement de votre historique Uber Eats…";
     if (reset) {
+      selectedId = null;
+      indexRevision++;
+      historyPages.clear();
+      indexedOrders.clear();
+      indexedRestaurants = [];
       orders = [];
       restaurants = [];
       cursor = "";
@@ -99,7 +185,8 @@
       render();
     }
     try {
-      const page = await loadOrderPage(cursor);
+      const page = await historyPage(cursor);
+      recordOrders(page.orders);
       orders.push(...page.orders);
       cursor = page.cursor;
       loaded = true;
@@ -107,11 +194,11 @@
       search.hidden = !restaurants.length;
       historyLink.hidden = true;
       hasMore = page.hasMore;
-      status.textContent = restaurants.length
-        ? `${restaurants.length} restaurants · ${restaurants.reduce((sum, restaurant) => sum + restaurant.orders.length, 0)} commandes chargées`
-        : "Aucune commande passée dans votre historique Uber Eats.";
+      status.textContent = selectedId ? selectedSummary() : historySummary();
       render();
       void loadPublicRatings();
+      updateBadges();
+      if (reset && /\/(?:feed|search)\/?$/.test(location.pathname)) void indexHistory();
     } catch (error) {
       hasMore = false;
       status.textContent =
@@ -122,7 +209,7 @@
       loading = false;
       paginationLoading.hidden = true;
       refresh.disabled = false;
-      if (hasMore && !panel.hidden) pagination.observe(sentinel);
+      if (hasMore && !panel.hidden && !selectedId) pagination.observe(sentinel);
     }
   }
 
@@ -132,8 +219,8 @@
     launcher.setAttribute("aria-expanded", String(open));
     if (open) {
       close.focus({ preventScroll: true });
-      if (!loaded) void load();
-      else if (hasMore) pagination.observe(sentinel);
+      if (!loaded && !selectedId) void load();
+      else if (hasMore && !selectedId) pagination.observe(sentinel);
     } else {
       pagination.unobserve(sentinel);
       launcher.focus({ preventScroll: true });
@@ -147,16 +234,39 @@
     const prefix = location.pathname.match(/^\/[a-z]{2}(?:-[a-z]{2})?(?=\/|$)/)?.[0] || "";
     historyLink.href = `${location.origin}${prefix}/orders`;
     historyLink.hidden = isHistory || loaded;
-    if (isHistory) setOpen(true);
+    if (isHistory) {
+      selectedId = null;
+      search.value = "";
+      render();
+      setOpen(true);
+    } else if (/\/(?:feed|search)\/?$/.test(location.pathname)) void indexHistory();
   }
 
-  launcher.addEventListener("click", () => setOpen(true));
+  launcher.addEventListener("click", () => {
+    selectedId = null;
+    search.value = "";
+    render();
+    if (loaded) status.textContent = historySummary();
+    setOpen(true);
+  });
   close.addEventListener("click", () => setOpen(false));
   shadow.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !panel.hidden) setOpen(false);
   });
-  search.addEventListener("input", render);
+  search.addEventListener("input", () => {
+    selectedId = null;
+    if (!loaded) {
+      void load();
+      return;
+    }
+    if (hasMore) pagination.observe(sentinel);
+    status.textContent = historySummary();
+    render();
+  });
   refresh.addEventListener("click", () => void load(true));
-  new MutationObserver(updateRoute).observe(document.body, { childList: true, subtree: true });
+  new MutationObserver(() => {
+    updateRoute();
+    updateBadges();
+  }).observe(document.body, { childList: true, subtree: true });
   updateRoute();
 })();

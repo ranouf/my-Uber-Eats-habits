@@ -16,6 +16,8 @@ Le service [src/api.services.ts](src/api.services.ts) est généré par la CLI N
 
 ## Notes des restaurants
 
+Sur les pages de catalogue `/feed` et de recherche `/search`, un badge vert **Déjà commandé** apparaît sur les restaurants présents dans l’historique. Cliquer sur ce badge ouvre leurs commandes dans le panneau sans naviguer vers le restaurant. Le rapprochement utilise l’identifiant du restaurant, jamais son nom. L’historique est parcouru progressivement en arrière-plan, y compris ses pages anciennes ; les cartes ajoutées pendant la navigation sont aussi marquées. Les données et les pages déjà lues restent uniquement en mémoire dans l’onglet et sont réutilisées par le panneau.
+
 La note moyenne des clients et le nombre d'avis apparaissent sous le nom du restaurant. Ouvrir ses commandes pour consulter **Votre note** : cinq étoiles vides pour une commande sans note, ou les étoiles de l'évaluation déjà reçue d'Uber Eats. Un clic sur une étoile envoie la note choisie à Uber Eats pour cette commande ; le message de succès et les étoiles enregistrées apparaissent après acceptation du serveur. Un échec conserve la note précédente et permet de réessayer.
 
 L'en-tête du restaurant affiche également **Votre note** si une seule commande chargée est notée, ou **Votre moyenne** si plusieurs le sont. Seules les notes personnelles connues des commandes chargées entrent dans le calcul : les commandes sans note ne valent pas zéro. La moyenne se met à jour après un envoi réussi, une actualisation ou le chargement de commandes supplémentaires ; le nombre de notes chargées est indiqué lorsqu'il y en a plusieurs.

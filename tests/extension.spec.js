@@ -67,6 +67,15 @@ const apiOrders = [
     items: [[1, "Soupe à l’oignon"]],
   },
 ];
+const feedFixture = fixture.replace(
+  /<main>[\s\S]*<\/main>/,
+  `<main><h1>Vos restaurants à proximité</h1>
+  <div class="feed-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px">
+    <a data-testid="store-card" href="/ca-fr/store/la-cantine/AAAAAAAAAAAAAAAAAAAAAQ"><div style="height:150px;background:#e8ede7;border-radius:12px"></div><h2>La Cantine</h2><p>4,6 ★ · 20 min</p></a>
+    <a data-testid="store-card" href="/ca-fr/store/maison-bangkok/00000000-0000-0000-0000-000000000002"><div style="height:150px;background:#f0e9df;border-radius:12px"></div><h2>Maison Bangkok</h2><p>4,2 ★ · 25 min</p></a>
+    <a data-testid="store-card" href="/ca-fr/store/autre-cantine/00000000-0000-0000-0000-000000000003"><div style="height:150px;background:#e8e8e8;border-radius:12px"></div><h2>La Cantine</h2><p>Nouveau restaurant</p></a>
+  </div></main>`,
+);
 function apiResponse(orders, hasMore) {
   return {
     status: "success",
@@ -161,12 +170,7 @@ test.beforeAll(async () => {
     }
     return route.fulfill({
       contentType: "text/html",
-      body: new URL(request.url()).pathname.endsWith("/orders")
-        ? fixture
-        : fixture.replace(
-            /<main>[\s\S]*<\/main>/,
-            "<main><h1>Vos restaurants à proximité</h1></main>",
-          ),
+      body: new URL(request.url()).pathname.endsWith("/orders") ? fixture : feedFixture,
     });
   });
 });
@@ -216,11 +220,11 @@ test("affiche les commandes API dans le panneau et filtre les restaurants", asyn
 test("charge les commandes depuis l’accueil français sans naviguer vers l’historique", async () => {
   const page = await context.newPage();
   await page.setViewportSize({ width: 1440, height: 1000 });
+  const request = page.waitForRequest((request) => request.url().includes("/getPastOrdersV1"));
   await page.goto("https://www.ubereats.com/ca-fr/feed?diningMode=DELIVERY&pl=test");
   await expect(page.locator('main a[href*="mod=orderReceipt"]')).toHaveCount(0);
   await expect(page.locator(".launcher .version")).toHaveText(`v${version}`);
   await page.locator(".launcher").screenshot({ path: ".codex/panel-launcher.png" });
-  const request = page.waitForRequest((request) => request.url().includes("/getPastOrdersV1"));
   await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
   expect(new URL((await request).url()).searchParams.get("localeCode")).toBe("ca-fr");
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
@@ -285,6 +289,72 @@ test("affiche le panneau sur mobile et le ferme au clavier", async () => {
   await page.getByRole("button", { name: "Fermer le panneau" }).focus();
   await page.keyboard.press("Escape");
   await expect(panel).toBeHidden();
+  await page.close();
+});
+
+test("marque les cartes par identifiant et ouvre les commandes sans quitter le catalogue", async () => {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  let releaseOlder;
+  const olderPage = new Promise((resolve) => {
+    releaseOlder = resolve;
+  });
+  await page.route("**/_p/api/getPastOrdersV1?*", async (route) => {
+    const { lastWorkflowUUID } = route.request().postDataJSON();
+    if (!lastWorkflowUUID) return route.fulfill({ json: apiResponse(apiOrders, true) });
+    expect(lastWorkflowUUID).toBe("order-1");
+    await olderPage;
+    const response = apiResponse([{ ...apiOrders[2], id: "order-0" }], false);
+    response.data.ordersMap["order-0"].storeInfo = {
+      uuid: "00000000-0000-0000-0000-000000000004",
+      title: "Ancienne adresse",
+      slug: "ancienne-adresse",
+      rating: null,
+    };
+    return route.fulfill({ json: response });
+  });
+  await page.goto("https://www.ubereats.com/ca-fr/feed?diningMode=DELIVERY");
+  const cantine = page.getByRole("button", {
+    name: "Voir mes commandes chez La Cantine",
+    exact: true,
+  });
+  await expect(cantine).toBeVisible();
+  await expect(page.locator('[href*="autre-cantine"] button')).toHaveCount(0);
+  await expect(page.locator(".panel")).toBeHidden();
+  await page.evaluate(() => {
+    const card = document.createElement("a");
+    card.dataset.testid = "store-card";
+    card.href = "/ca-fr/store/ancienne-adresse/00000000-0000-0000-0000-000000000004";
+    card.textContent = "Ancienne adresse";
+    document.querySelector(".feed-cards").append(card);
+  });
+  const olderBadge = page.getByRole("button", { name: "Voir mes commandes chez Ancienne adresse" });
+  await expect(olderBadge).toHaveCount(0);
+  releaseOlder();
+  await expect(olderBadge).toBeVisible();
+  await page.screenshot({ path: ".codex/feed-badges-desktop.png" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await cantine.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: ".codex/feed-badges-mobile.png" });
+  await cantine.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/ca-fr\/feed\?diningMode=DELIVERY$/);
+  await expect(page.locator(".panel .restaurant-name")).toHaveText(["La Cantine"]);
+  await expect(page.locator("details[open] .order")).toHaveCount(2);
+  await expect(page.getByRole("status")).toHaveText("2 commandes chez ce restaurant");
+  await page.screenshot({ path: ".codex/feed-restaurant-orders-mobile.png" });
+  await page.getByRole("button", { name: "Fermer le panneau" }).click();
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await olderBadge.click();
+  await expect(page.locator(".panel .restaurant-name")).toHaveText(["Ancienne adresse"]);
+  await expect(page.locator("details[open] .order")).toHaveCount(1);
+  await expect(page.getByRole("status")).toHaveText("1 commande chez ce restaurant");
+  await page.getByRole("button", { name: "Fermer le panneau" }).click();
+  await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("restaurants ·");
+  await expect(
+    page.locator(".panel .restaurant-name").filter({ hasText: "La Cantine" }),
+  ).toBeVisible();
   await page.close();
 });
 

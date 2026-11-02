@@ -147,6 +147,19 @@ h2 {
 .load-sentinel {
   height: 1px;
 }
+.ordered-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: #e8f7ed;
+  color: #065f36;
+  font-weight: 600;
+}
+.ordered-badge:hover {
+  background: #ccebd7;
+}
 .pagination-loading {
   display: flex;
   align-items: center;

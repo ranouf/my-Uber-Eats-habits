@@ -38,3 +38,4 @@ jobs:
           path: |
             test-results/
             .codex/panel-*.png
+            .codex/feed-*.png
