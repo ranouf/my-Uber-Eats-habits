@@ -235,9 +235,14 @@ test("pagine avec le dernier identifiant et conserve le restaurant ouvert", asyn
   const page = await context.newPage();
   await page.setViewportSize({ width: 390, height: 350 });
   const cursors = [];
-  await page.route("**/_p/api/getPastOrdersV1?*", (route) => {
+  let finishLoading;
+  const loadingPage = new Promise((resolve) => {
+    finishLoading = resolve;
+  });
+  await page.route("**/_p/api/getPastOrdersV1?*", async (route) => {
     const { lastWorkflowUUID } = route.request().postDataJSON();
     cursors.push(lastWorkflowUUID);
+    if (lastWorkflowUUID) await loadingPage;
     return route.fulfill({
       json: lastWorkflowUUID
         ? apiResponse([apiOrders[2], { ...apiOrders[2], id: "order-0" }], false)
@@ -247,10 +252,22 @@ test("pagine avec le dernier identifiant et conserve le restaurant ouvert", asyn
   await page.goto("https://www.ubereats.com/orders");
   await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
   await page.locator(".load-sentinel").scrollIntoViewIfNeeded();
+  const spinner = page.getByRole("progressbar", {
+    name: "Chargement des commandes plus anciennes",
+  });
+  await expect(spinner).toBeVisible();
+  await spinner.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: ".codex/panel-spinner-mobile.png" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await spinner.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: ".codex/panel-spinner-desktop.png" });
+  finishLoading();
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 4 commandes chargées");
+  await expect(spinner).toBeHidden();
   await expect(page.locator("details[open] .order")).toHaveCount(3);
   expect(cursors).toEqual(["", "order-1"]);
   await page.screenshot({ path: ".codex/panel-lazy-loading.png" });
+  await page.setViewportSize({ width: 390, height: 350 });
   await page.getByRole("button", { name: "Actualiser les commandes" }).click();
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
   await page.close();

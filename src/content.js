@@ -14,6 +14,7 @@
   const historyLink = shadow.querySelector(".history-link");
   const refresh = shadow.querySelector(".refresh");
   const sentinel = shadow.querySelector(".load-sentinel");
+  const paginationLoading = shadow.querySelector(".pagination-loading");
   const pagination = new IntersectionObserver(
     ([entry]) => {
       if (entry.isIntersecting && !panel.hidden) void load();
@@ -83,6 +84,7 @@
   async function load(reset = false) {
     if (loading) return;
     loading = true;
+    paginationLoading.hidden = !loaded || reset;
     refresh.disabled = true;
     pagination.unobserve(sentinel);
     status.textContent = "Chargement de votre historique Uber Eats…";
@@ -118,6 +120,7 @@
           : error.message;
     } finally {
       loading = false;
+      paginationLoading.hidden = true;
       refresh.disabled = false;
       if (hasMore && !panel.hidden) pagination.observe(sentinel);
     }
