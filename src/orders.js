@@ -21,6 +21,7 @@ export async function loadOrderPage(lastWorkflowUUID = "") {
     const ratingIndex = ["ONE_STAR", "TWO_STAR", "THREE_STAR", "FOUR_STAR", "FIVE_STAR"].indexOf(
       ownRating?.value,
     );
+    const historyRating = Array.isArray(store.rating) && store.rating.length > 0;
     const storeId = btoa(
       String.fromCharCode(
         ...store.uuid
@@ -36,14 +37,16 @@ export async function loadOrderPage(lastWorkflowUUID = "") {
       id,
       restaurantId: store.uuid,
       restaurant: store.title,
-      publicRating: store.rating,
-      personalRating: ownRating
-        ? ratingIndex < 0
-          ? null
-          : ratingIndex + 1
-        : ratingInfo.userRatings.length === 0
-          ? 0
-          : null,
+      publicRating: Array.isArray(store.rating) ? null : store.rating,
+      personalRating: historyRating
+        ? store.rating.filter(Boolean).length
+        : ownRating
+          ? ratingIndex < 0
+            ? null
+            : ratingIndex + 1
+          : ratingInfo.userRatings.length === 0
+            ? 0
+            : null,
       canRate: ratingInfo.isRatable,
       restaurantUrl: new URL(`/${locale}/store/${store.slug}/${storeId}`, location.origin).href,
       date: new Intl.DateTimeFormat("fr-CA", { dateStyle: "medium", timeStyle: "short" }).format(

@@ -4714,7 +4714,8 @@ export interface StoreInfo {
     uuid?: string;
     title?: string;
     slug?: string;
-    rating?: StorePublicRating | undefined;
+    /** Note personnelle de cette commande : une valeur par étoile. Distincte de la moyenne publique renvoyée par getStoreV1. */
+    rating?: boolean[] | undefined;
 
     [key: string]: any;
 }

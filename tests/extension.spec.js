@@ -90,21 +90,11 @@ function apiResponse(orders, hasMore) {
                   : "00000000-0000-0000-0000-000000000002",
               title: order.store === "a" ? "La Cantine" : "Maison Bangkok",
               slug: order.store === "a" ? "la-cantine" : "maison-bangkok",
-              rating: order.store === "a" ? null : { ratingValue: 4.2, reviewCount: 23 },
+              rating: order.id === "order-1" ? [true, true, true, true, false] : null,
             },
             ratingInfo: {
               isRatable: order.id === "order-3" || order.id === "order-0",
-              userRatings:
-                order.id === "order-1"
-                  ? [
-                      {
-                        uuid: "rating-order-1",
-                        value: "FOUR_STAR",
-                        schema: "FIVE_STARS",
-                        subjectType: "STORE",
-                      },
-                    ]
-                  : [],
+              userRatings: [],
             },
             fareInfo: { checkoutInfo: [{ key: "eats_fare.total", formattedValue: order.total }] },
           },
@@ -127,8 +117,16 @@ test.beforeAll(async () => {
     const request = route.request();
     const operation = new URL(request.url()).pathname.split("/").at(-1);
     if (operation === "getStoreV1") {
+      const isFirstStore = request.postDataJSON().storeUuid.endsWith("1");
       return route.fulfill({
-        json: { status: "success", data: { rating: { ratingValue: 4.6, reviewCount: 1200 } } },
+        json: {
+          status: "success",
+          data: {
+            rating: isFirstStore
+              ? { ratingValue: 4.6, reviewCount: 1200 }
+              : { ratingValue: 4.2, reviewCount: 23 },
+          },
+        },
       });
     }
     if (operation === "getPendingRatingV1") {
@@ -312,11 +310,7 @@ test("affiche les notes publiques et personnelles, puis envoie et relit la note 
   await page.route("**/_p/api/getPastOrdersV1?*", (route) => {
     const response = apiResponse(apiOrders, false);
     if (savedRating) {
-      const { value, schema, subjectType } = savedRating;
-      response.data.ordersMap["order-3"].ratingInfo.userRatings = [
-        { value, schema, subjectType },
-        { value: "THUMB_UP", schema: "TWO_THUMBS", subjectType: "COURIER" },
-      ];
+      response.data.ordersMap["order-3"].storeInfo.rating = [true, true, true, false, false];
       response.data.ordersMap["order-3"].ratingInfo.isRatable = false;
     }
     return route.fulfill({ json: response });

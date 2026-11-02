@@ -3363,8 +3363,12 @@
                 "type": "string"
               },
               "rating": {
-                "$ref": "#/components/schemas/StorePublicRating",
-                "nullable": true
+                "type": "array",
+                "items": {
+                  "type": "boolean"
+                },
+                "nullable": true,
+                "description": "Note personnelle de cette commande : une valeur par étoile. Distincte de la moyenne publique renvoyée par getStoreV1."
               }
             }
           },
