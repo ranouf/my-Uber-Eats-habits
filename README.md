@@ -18,6 +18,8 @@ Le service TypeScript autonome [src/api-services.ts](src/api-services.ts) regrou
 
 La note moyenne des clients et le nombre d'avis apparaissent sous le nom du restaurant. Ouvrir ses commandes pour consulter **Votre note** : cinq étoiles vides pour une commande sans note, ou les étoiles de l'évaluation déjà reçue d'Uber Eats. Un clic sur une étoile envoie la note choisie à Uber Eats pour cette commande ; le message de succès et les étoiles enregistrées apparaissent après acceptation du serveur. Un échec conserve la note précédente et permet de réessayer.
 
+L'en-tête du restaurant affiche également **Votre note** si une seule commande chargée est notée, ou **Votre moyenne** si plusieurs le sont. Seules les notes personnelles connues des commandes chargées entrent dans le calcul : les commandes sans note ne valent pas zéro. La moyenne se met à jour après un envoi réussi, une actualisation ou le chargement de commandes supplémentaires ; le nombre de notes chargées est indiqué lorsqu'il y en a plusieurs.
+
 Pour une commande qu'Uber Eats ne permet plus de noter, aucune section de notation n'est affichée sauf si une note existe déjà : celle-ci reste visible en lecture seule. Si une note n'est pas disponible dans la réponse d'une commande encore éligible, le panneau le signale sans inventer de valeur. Le formulaire est relu au clic pour vérifier la commande, le restaurant et les valeurs proposées. Aucun pourboire ni avis sur le livreur n'est inclus dans cet envoi. Les notes sont conservées par Uber Eats, sans stockage local dans l'extension.
 
 ## Versionnement

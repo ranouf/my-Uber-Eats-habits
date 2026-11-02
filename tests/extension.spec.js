@@ -312,6 +312,7 @@ test("affiche les notes publiques et personnelles, puis envoie et relit la note 
   await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
   await expect(page.locator(".public-rating").first()).toContainText("4,6 / 5 · 1200 avis");
   await expect(page.locator(".public-rating").last()).toContainText("4,2 / 5 · 23 avis");
+  await expect(page.locator(".personal-average")).toHaveText(["Votre note : ★ 4,0 / 5"]);
   await page.locator(".restaurant-name").filter({ hasText: "Maison Bangkok" }).click();
   await expect(page.locator("details[open] .personal-rating")).toHaveCount(0);
   await page.screenshot({ path: ".codex/panel-rating-ineligible.png" });
@@ -320,11 +321,12 @@ test("affiche les notes publiques et personnelles, puis envoie et relit la note 
   const latest = page.locator("details[open] .personal-rating").first();
   const previous = page.locator("details[open] .personal-rating").last();
   await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
+  await expect(page.locator(".personal-average")).toHaveText(["Votre note : ★ 4,0 / 5"]);
   await expect(previous.locator("button")).toHaveText(["★", "★", "★", "★", "☆"]);
   await expect(previous.getByRole("button", { name: "Mettre 5 étoiles" })).toBeDisabled();
   await expect(previous.locator(".rating-help")).toHaveCount(0);
   expect(submission).toBeUndefined();
-  await latest.getByRole("button", { name: "Mettre 4 étoiles" }).click();
+  await latest.getByRole("button", { name: "Mettre 3 étoiles" }).click();
   await expect(latest.getByText("Envoi de votre note à Uber Eats…")).toBeVisible();
   await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
   await expect.poll(() => submission).not.toBeUndefined();
@@ -334,7 +336,7 @@ test("affiche les notes publiques et personnelles, puis envoie et relit la note 
     ratingItems: [
       {
         uuid: "00000000-0000-0000-0000-000000000001",
-        value: "FOUR_STAR",
+        value: "THREE_STAR",
         schema: "FIVE_STARS",
         subjectType: "STORE",
       },
@@ -342,7 +344,10 @@ test("affiche les notes publiques et personnelles, puis envoie et relit la note 
   });
   acknowledge();
   await expect(latest.getByText("Note envoyée à Uber Eats.")).toBeVisible();
-  await expect(latest.locator("button")).toHaveText(["★", "★", "★", "★", "☆"]);
+  await expect(latest.locator("button")).toHaveText(["★", "★", "★", "☆", "☆"]);
+  await expect(page.locator(".personal-average")).toHaveText([
+    "Votre moyenne : ★ 3,5 / 5 · 2 notes chargées",
+  ]);
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.screenshot({ path: ".codex/panel-ratings-desktop.png" });
   await page.setViewportSize({ width: 390, height: 1000 });
@@ -351,8 +356,11 @@ test("affiche les notes publiques et personnelles, puis envoie et relit la note 
   await expect(page.locator(".restaurant-name").first()).toBeVisible();
   await page.locator(".restaurant-name").first().click();
   await expect(page.locator("details[open] .personal-rating").first().locator("button")).toHaveText(
-    ["★", "★", "★", "★", "☆"],
+    ["★", "★", "★", "☆", "☆"],
   );
+  await expect(page.locator(".personal-average")).toHaveText([
+    "Votre moyenne : ★ 3,5 / 5 · 2 notes chargées",
+  ]);
   await page.close();
 });
 
@@ -367,6 +375,7 @@ test("un échec d’envoi ne remplace pas la note affichée", async () => {
   await latest.getByRole("button", { name: "Mettre 5 étoiles" }).click();
   await expect(latest.locator(".rating-message")).toContainText("ne peut pas traiter la demande");
   await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
+  await expect(page.locator(".personal-average")).toHaveText(["Votre note : ★ 4,0 / 5"]);
   await expect(latest.getByRole("button", { name: "Mettre 5 étoiles" })).toBeEnabled();
   await page.close();
 });

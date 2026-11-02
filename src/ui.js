@@ -85,6 +85,24 @@ export function renderRestaurants(results, restaurants, query, onRate) {
             : "Chargement de la note des clients…",
       ),
     );
+    const ratedOrders = restaurant.orders.filter((order) => order.personalRating > 0);
+    if (ratedOrders.length) {
+      const average =
+        ratedOrders.reduce((sum, order) => sum + order.personalRating, 0) / ratedOrders.length;
+      const value = average.toLocaleString("fr-CA", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      });
+      label.append(
+        element(
+          "span",
+          "public-rating personal-average",
+          ratedOrders.length === 1
+            ? `Votre note : ★ ${value} / 5`
+            : `Votre moyenne : ★ ${value} / 5 · ${ratedOrders.length} notes chargées`,
+        ),
+      );
+    }
     summary.append(label, element("span", "count", String(restaurant.orders.length)));
     const content = element("div", "restaurant-content");
     content.append(link("Voir le restaurant ↗", restaurant.url));
