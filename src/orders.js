@@ -26,10 +26,7 @@ export async function loadOrderPage(lastWorkflowUUID = "") {
   const orders = orderUuids.map((id) => {
     const { baseEaterOrder: order, storeInfo: store, fareInfo: fare, ratingInfo } = ordersMap[id];
     const ownRating = ratingInfo.userRatings.find(
-      (rating) =>
-        rating.schema === "FIVE_STARS" &&
-        rating.subjectType === "STORE" &&
-        rating.uuid === store.uuid,
+      (rating) => rating.schema === "FIVE_STARS" && rating.subjectType === "STORE",
     );
     const ratingIndex = ["ONE_STAR", "TWO_STAR", "THREE_STAR", "FOUR_STAR", "FIVE_STAR"].indexOf(
       ownRating?.value,

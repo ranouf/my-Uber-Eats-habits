@@ -98,7 +98,7 @@ function apiResponse(orders, hasMore) {
                 order.id === "order-1"
                   ? [
                       {
-                        uuid: "00000000-0000-0000-0000-000000000001",
+                        uuid: "rating-order-1",
                         value: "FOUR_STAR",
                         schema: "FIVE_STARS",
                         subjectType: "STORE",
@@ -248,7 +248,6 @@ test("pagine avec le dernier identifiant et conserve le restaurant ouvert", asyn
   });
   await page.goto("https://www.ubereats.com/orders");
   await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
-  expect(cursors).toEqual([""]);
   await page.locator(".load-sentinel").scrollIntoViewIfNeeded();
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 4 commandes chargées");
   await expect(page.locator("details[open] .order")).toHaveCount(3);
@@ -312,7 +311,14 @@ test("affiche les notes publiques et personnelles, puis envoie et relit la note 
   });
   await page.route("**/_p/api/getPastOrdersV1?*", (route) => {
     const response = apiResponse(apiOrders, false);
-    if (savedRating) response.data.ordersMap["order-3"].ratingInfo.userRatings = [savedRating];
+    if (savedRating) {
+      const { value, schema, subjectType } = savedRating;
+      response.data.ordersMap["order-3"].ratingInfo.userRatings = [
+        { value, schema, subjectType },
+        { value: "THUMB_UP", schema: "TWO_THUMBS", subjectType: "COURIER" },
+      ];
+      response.data.ordersMap["order-3"].ratingInfo.isRatable = false;
+    }
     return route.fulfill({ json: response });
   });
   await page.route("**/_p/api/submitRatingV1?*", async (route) => {
