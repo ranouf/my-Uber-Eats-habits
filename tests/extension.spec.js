@@ -76,6 +76,13 @@ const feedFixture = fixture.replace(
     <a data-testid="store-card" href="/ca-fr/store/autre-cantine/00000000-0000-0000-0000-000000000003"><div style="height:150px;background:#e8e8e8;border-radius:12px"></div><h2>La Cantine</h2><p>Nouveau restaurant</p></a>
   </div></main>`,
 );
+const storeFixture = fixture.replace(
+  /<main>[\s\S]*<\/main>/,
+  `<main>
+  <div style="height:180px;background:#e8ede7;border-radius:16px"></div>
+  <h1>La Cantine</h1><p>4,6 ★ · 1200 avis</p><p>Livraison · 20 min</p>
+  <h2>Articles en vedette</h2><p>Soupe à l’oignon · Salade verte</p></main>`,
+);
 function apiResponse(orders, hasMore) {
   return {
     status: "success",
@@ -170,7 +177,11 @@ test.beforeAll(async () => {
     }
     return route.fulfill({
       contentType: "text/html",
-      body: new URL(request.url()).pathname.endsWith("/orders") ? fixture : feedFixture,
+      body: new URL(request.url()).pathname.endsWith("/orders")
+        ? fixture
+        : new URL(request.url()).pathname.includes("/store/")
+          ? storeFixture
+          : feedFixture,
     });
   });
 });
@@ -355,6 +366,44 @@ test("marque les cartes par identifiant et ouvre les commandes sans quitter le c
   await expect(
     page.locator(".panel .restaurant-name").filter({ hasText: "La Cantine" }),
   ).toBeVisible();
+  await page.close();
+});
+
+test("affiche le badge sur la fiche et le met à jour en changeant de restaurant", async () => {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("https://www.ubereats.com/ca-fr/store/la-cantine/AAAAAAAAAAAAAAAAAAAAAQ");
+  const badge = page.getByRole("button", {
+    name: "Voir mes commandes chez La Cantine",
+    exact: true,
+  });
+  await expect(badge).toBeVisible();
+  await expect(page.locator("h1 + [data-habits-detail-badge]")).toHaveCount(1);
+  await page.screenshot({ path: ".codex/feed-store-badge-desktop.png" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: ".codex/feed-store-badge-mobile.png" });
+  await badge.click();
+  await expect(page).toHaveURL(/\/store\/la-cantine\/AAAAAAAAAAAAAAAAAAAAAQ$/);
+  await expect(page.locator(".panel .restaurant-name")).toHaveText(["La Cantine"]);
+  await expect(page.locator("details[open] .order")).toHaveCount(2);
+  await page.screenshot({ path: ".codex/feed-store-orders-mobile.png" });
+  await page.getByRole("button", { name: "Fermer le panneau" }).click();
+  await page.evaluate(() => {
+    history.pushState({}, "", "/ca-fr/store/autre-cantine/00000000-0000-0000-0000-000000000003");
+    document.querySelector("h1").textContent = "La Cantine";
+  });
+  await expect(page.locator("[data-habits-detail-badge]")).toHaveCount(0);
+  await page.evaluate(() => {
+    history.pushState({}, "", "/ca-fr/store/maison-bangkok/00000000-0000-0000-0000-000000000002");
+    document.querySelector("h1").textContent = "Maison Bangkok";
+  });
+  const nextBadge = page.getByRole("button", { name: "Voir mes commandes chez Maison Bangkok" });
+  await expect(nextBadge).toBeVisible();
+  await expect(page.locator("[data-habits-detail-badge]")).toHaveCount(1);
+  await nextBadge.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".panel .restaurant-name")).toHaveText(["Maison Bangkok"]);
+  await expect(page.locator("details[open] .order")).toHaveCount(1);
   await page.close();
 });
 

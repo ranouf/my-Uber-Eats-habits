@@ -72,7 +72,6 @@
   }
 
   function updateBadges() {
-    if (!/\/(?:feed|search)\/?$/.test(location.pathname)) return;
     markOrderedRestaurants(indexedRestaurants, (id) => {
       selectedId = id;
       search.value = "";
@@ -175,6 +174,7 @@
       historyPages.clear();
       indexedOrders.clear();
       indexedRestaurants = [];
+      updateBadges();
       orders = [];
       restaurants = [];
       cursor = "";
@@ -198,7 +198,7 @@
       render();
       void loadPublicRatings();
       updateBadges();
-      if (reset && /\/(?:feed|search)\/?$/.test(location.pathname)) void indexHistory();
+      if (reset && /\/(?:feed|search)\/?$|\/store\//.test(location.pathname)) void indexHistory();
     } catch (error) {
       hasMore = false;
       status.textContent =
@@ -239,7 +239,7 @@
       search.value = "";
       render();
       setOpen(true);
-    } else if (/\/(?:feed|search)\/?$/.test(location.pathname)) void indexHistory();
+    } else if (/\/(?:feed|search)\/?$|\/store\//.test(location.pathname)) void indexHistory();
   }
 
   launcher.addEventListener("click", () => {
