@@ -252,7 +252,7 @@ test("affiche le panneau sur mobile et le ferme au clavier", async () => {
   await page.goto("https://www.ubereats.com/ca-fr/orders");
   await expect(page.getByRole("status")).toHaveText("2 restaurants · 3 commandes chargées");
   await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
-  const panel = page.getByRole("complementary", { name: "UberEatHabits — Mes restaurants" });
+  const panel = page.getByRole("complementary", { name: "Uber Eats Habits — Mes restaurants" });
   expect((await panel.boundingBox()).width).toBe(390);
   await page.screenshot({ path: ".codex/panel-mobile.png" });
   await page.getByRole("button", { name: "Fermer le panneau" }).focus();

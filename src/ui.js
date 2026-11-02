@@ -131,9 +131,9 @@ export function createPanel() {
     <button class="launcher" type="button" aria-label="Mes restaurants" aria-expanded="false" aria-controls="habits-panel">
       <span class="launcher-icon" aria-hidden="true">↺</span><span class="launcher-label">Mes restaurants<small class="version">v${version}</small></span>
     </button>
-    <aside id="habits-panel" class="panel" aria-label="UberEatHabits — Mes restaurants" hidden>
+    <aside id="habits-panel" class="panel" aria-label="Uber Eats Habits — Mes restaurants" hidden>
       <header class="panel-header">
-        <div><div class="brand-row"><span class="brand">UberEat<span>Habits</span></span><small class="version">v${version}</small></div><h2>Mes restaurants</h2></div>
+        <div><div class="brand-row"><span class="brand">Uber Eats <span>Habits</span></span><small class="version">v${version}</small></div><h2>Mes restaurants</h2></div>
         <button class="icon-button close" type="button" aria-label="Fermer le panneau">×</button>
       </header>
       <div class="panel-body">
