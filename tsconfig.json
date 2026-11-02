@@ -11,5 +11,5 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["src/api-services.ts"]
+  "include": ["src/api.services.ts"]
 }

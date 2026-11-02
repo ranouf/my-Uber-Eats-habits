@@ -1,27 +1,27 @@
 # Catalogue du service API Uber Eats
 
-Inventaire du 30 octobre 2026 : **109 opérations**, retrouvées dans 103 bundles chargés sur l'accueil et dans les captures réseau de l'accueil et de l'historique. Le client RPC du site utilise POST et le préfixe `/_p/api/`. Le service se trouve dans [src/api-services.ts](src/api-services.ts).
+Inventaire du 30 octobre 2026 : **109 opérations**, retrouvées dans 103 bundles chargés sur l'accueil et dans les captures réseau de l'accueil et de l'historique. Le client RPC du site utilise POST et le préfixe `/_p/api/`. Le service se trouve dans [src/api.services.ts](src/api.services.ts).
 
 Ce catalogue couvre les références accessibles lors de cette analyse, sans prétendre inventorier toutes les API d'Uber. Les ressources tierces, la télémétrie publicitaire et les API distinctes des SDK de paiement ne sont pas ajoutées au service. Aucune opération métier de mutation n'a été exécutée pour cette analyse.
 
 ## Utilisation
 
-```ts
-import { UberEatsApiService } from "./api-services";
+```js
+import { createApiClient } from "./src/api-client.js";
 
-const api = new UberEatsApiService("ca-fr");
-const firstPage = await api.getPastOrdersV1({ lastWorkflowUUID: "" });
+const api = createApiClient("ca-fr");
+const { data: firstPage } = await api.getPastOrdersV1({ lastWorkflowUUID: "" });
 if (firstPage.meta.hasMore) {
-  const nextPage = await api.getPastOrdersV1({
+  const { data: nextPage } = await api.getPastOrdersV1({
     lastWorkflowUUID: firstPage.orderUuids.at(-1),
   });
   console.log(nextPage.orderUuids.length);
 }
 ```
 
-Le fichier TypeScript est autonome et sans dépendance Angular. Il n'est pas injecté tel quel dans Chrome : le lecteur JavaScript existant reste utilisé par l'extension. Un consommateur TypeScript peut importer ce service dans son propre build. La session est transmise par le navigateur avec `credentials: "same-origin"` ; aucun cookie ou token n'est lu ou enregistré. Utiliser le service depuis le site Uber Eats connecté, pas comme un client serveur authentifié.
+La CLI NSwag génère le service TypeScript depuis `openapi.local.json`. `npm run api:generate` produit aussi le JavaScript utilisé par l’extension. Utiliser la fabrique `createApiClient` pour appliquer l’intercepteur de session et d’erreurs ; aucun cookie ni jeton n’est lu ou enregistré. Les réponses conservent leur enveloppe `status`/`data`. Les erreurs HTTP ou RPC produisent `UberEatsApiError` ; le paramètre `signal` permet l’annulation.
 
-Les méthodes correspondant aux contrats observés disposent de types partiels explicites. Pour les autres, le corps est obligatoire et la réponse vaut `unknown` par défaut ; vérifier le contrat avant de l'utiliser. Les champs supplémentaires des réponses ne sont pas supprimés par le transport. Les erreurs HTTP et les réponses RPC `failure` produisent `UberEatsApiError`. Le paramètre optionnel `signal` permet l'annulation.
+Les huit contrats détaillés sont partiels ; les autres restent ouverts (`any` dans la sortie NSwag), sans garantie sur leurs paramètres ou leurs réponses. Vérifier leur contrat avant utilisation. Les champs inconnus ne sont pas supprimés. La [comparaison des clients non officiels](UBER_EATS_UNOFFICIAL_CLIENTS.md) décrit les autres schémas trouvés et la commande de génération.
 
 La classification « lecture présumée » suit le nom de la route, pas un contrat public garantissant l'absence d'effet. La présence d'une méthode ne constitue pas une autorisation de modifier un compte, payer ou passer commande. Les routes uniquement repérées dans un bundle n'ont pas été validées par une exécution réseau.
 

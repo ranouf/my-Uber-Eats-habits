@@ -1,22 +1,12 @@
+import { createApiClient } from "./api-client.js";
+
 function getLocale() {
   return location.pathname.match(/^\/([a-z]{2}(?:-[a-z]{2})?)(?:\/|$)/)?.[1] || "ca-fr";
 }
 
 export async function requestApi(operation, body) {
-  const locale = getLocale();
-  const response = await fetch(`/_p/api/${operation}?localeCode=${locale}`, {
-    method: "POST",
-    credentials: "same-origin",
-    headers: { "content-type": "application/json", "x-csrf-token": "x" },
-    body: JSON.stringify(body),
-  });
-  if (response.status === 401 || response.status === 403) {
-    throw new Error("Reconnectez-vous à Uber Eats, puis actualisez les commandes.");
-  }
-  if (!response.ok) throw new Error("Uber Eats ne peut pas traiter la demande pour le moment.");
-  const payload = await response.json();
-  if (payload.status !== "success")
-    throw new Error("Uber Eats n’a pas accepté la demande. Actualisez et réessayez.");
+  const client = createApiClient(getLocale());
+  const payload = await client[operation](body);
   return payload.data;
 }
 

@@ -12,7 +12,7 @@ Le panneau reprend la police du site et ses surfaces noires, blanches et grises.
 
 La source et la pagination vérifiées sont décrites dans [l'analyse API](UBER_EATS_API.md). La session Uber Eats existante est utilisée, sans création ni copie de token. Cette API interne peut évoluer ; une erreur de session ou de lecture est affichée explicitement.
 
-Le service TypeScript autonome [src/api-services.ts](src/api-services.ts) regroupe 109 opérations repérées dans les ressources du site. Le [catalogue sourcé](UBER_EATS_API_CATALOG.md) précise les contrats vérifiés, les références non exécutées et les exemples d'utilisation. Le panneau continue d'utiliser son lecteur JavaScript ; ce service est disponible pour les développements TypeScript.
+Le service [src/api.services.ts](src/api.services.ts) est généré par la CLI NSwag depuis le [schéma local non officiel](openapi.local.json), qui décrit 109 opérations inventoriées. Le panneau utilise sa version JavaScript générée et un intercepteur `fetch` commun pour la session et les erreurs. Après une modification du schéma : `npm run api:generate` (SDK .NET 10 requis). Le [catalogue sourcé](UBER_EATS_API_CATALOG.md) et la [comparaison des clients non officiels](UBER_EATS_UNOFFICIAL_CLIENTS.md) précisent la provenance et les limites.
 
 ## Notes des restaurants
 
