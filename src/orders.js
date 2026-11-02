@@ -1,21 +1,39 @@
-export async function loadOrderPage(lastWorkflowUUID = "") {
-  const locale = location.pathname.match(/^\/([a-z]{2}(?:-[a-z]{2})?)(?:\/|$)/)?.[1] || "ca-fr";
-  const response = await fetch(`/_p/api/getPastOrdersV1?localeCode=${locale}`, {
+function getLocale() {
+  return location.pathname.match(/^\/([a-z]{2}(?:-[a-z]{2})?)(?:\/|$)/)?.[1] || "ca-fr";
+}
+
+export async function requestApi(operation, body) {
+  const locale = getLocale();
+  const response = await fetch(`/_p/api/${operation}?localeCode=${locale}`, {
     method: "POST",
     credentials: "same-origin",
     headers: { "content-type": "application/json", "x-csrf-token": "x" },
-    body: JSON.stringify({ lastWorkflowUUID }),
+    body: JSON.stringify(body),
   });
   if (response.status === 401 || response.status === 403) {
     throw new Error("Reconnectez-vous à Uber Eats, puis actualisez les commandes.");
   }
-  if (!response.ok) throw new Error("Uber Eats ne peut pas charger l’historique pour le moment.");
+  if (!response.ok) throw new Error("Uber Eats ne peut pas traiter la demande pour le moment.");
   const payload = await response.json();
   if (payload.status !== "success")
-    throw new Error("Uber Eats n’a pas renvoyé l’historique attendu.");
-  const { ordersMap, orderUuids, meta } = payload.data;
+    throw new Error("Uber Eats n’a pas accepté la demande. Actualisez et réessayez.");
+  return payload.data;
+}
+
+export async function loadOrderPage(lastWorkflowUUID = "") {
+  const locale = getLocale();
+  const { ordersMap, orderUuids, meta } = await requestApi("getPastOrdersV1", { lastWorkflowUUID });
   const orders = orderUuids.map((id) => {
-    const { baseEaterOrder: order, storeInfo: store, fareInfo: fare } = ordersMap[id];
+    const { baseEaterOrder: order, storeInfo: store, fareInfo: fare, ratingInfo } = ordersMap[id];
+    const ownRating = ratingInfo.userRatings.find(
+      (rating) =>
+        rating.schema === "FIVE_STARS" &&
+        rating.subjectType === "STORE" &&
+        rating.uuid === store.uuid,
+    );
+    const ratingIndex = ["ONE_STAR", "TWO_STAR", "THREE_STAR", "FOUR_STAR", "FIVE_STAR"].indexOf(
+      ownRating?.value,
+    );
     const storeId = btoa(
       String.fromCharCode(
         ...store.uuid
@@ -31,6 +49,15 @@ export async function loadOrderPage(lastWorkflowUUID = "") {
       id,
       restaurantId: store.uuid,
       restaurant: store.title,
+      publicRating: store.rating,
+      personalRating: ownRating
+        ? ratingIndex < 0
+          ? null
+          : ratingIndex + 1
+        : ratingInfo.userRatings.length === 0
+          ? 0
+          : null,
+      canRate: ratingInfo.isRatable,
       restaurantUrl: new URL(`/${locale}/store/${store.slug}/${storeId}`, location.origin).href,
       date: new Intl.DateTimeFormat("fr-CA", { dateStyle: "medium", timeStyle: "short" }).format(
         new Date(order.lastStateChangeAt),
@@ -53,6 +80,7 @@ export function groupRestaurants(orders) {
         id: order.restaurantId,
         name: order.restaurant,
         url: order.restaurantUrl,
+        publicRating: order.publicRating,
         orders: [],
       });
     }

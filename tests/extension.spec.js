@@ -90,6 +90,21 @@ function apiResponse(orders, hasMore) {
                   : "00000000-0000-0000-0000-000000000002",
               title: order.store === "a" ? "La Cantine" : "Maison Bangkok",
               slug: order.store === "a" ? "la-cantine" : "maison-bangkok",
+              rating: order.store === "a" ? null : { ratingValue: 4.2, reviewCount: 23 },
+            },
+            ratingInfo: {
+              isRatable: order.id === "order-3" || order.id === "order-0",
+              userRatings:
+                order.id === "order-1"
+                  ? [
+                      {
+                        uuid: "00000000-0000-0000-0000-000000000001",
+                        value: "FOUR_STAR",
+                        schema: "FIVE_STARS",
+                        subjectType: "STORE",
+                      },
+                    ]
+                  : [],
             },
             fareInfo: { checkoutInfo: [{ key: "eats_fare.total", formattedValue: order.total }] },
           },
@@ -110,6 +125,31 @@ test.beforeAll(async () => {
   });
   await context.route("https://www.ubereats.com/**", async (route) => {
     const request = route.request();
+    const operation = new URL(request.url()).pathname.split("/").at(-1);
+    if (operation === "getStoreV1") {
+      return route.fulfill({
+        json: { status: "success", data: { rating: { ratingValue: 4.6, reviewCount: 1200 } } },
+      });
+    }
+    if (operation === "getPendingRatingV1") {
+      const { orderUuid } = request.postDataJSON();
+      return route.fulfill({
+        json: {
+          status: "success",
+          data: {
+            workflowUUID: orderUuid,
+            ratingInputPagesOrder: { storeRatingPage: "store" },
+            ratingInputPagesMap: {
+              store: {
+                type: "STORE_RATING",
+                uuid: "00000000-0000-0000-0000-000000000001",
+                identifiers: ["ONE_STAR", "TWO_STAR", "THREE_STAR", "FOUR_STAR", "FIVE_STAR"],
+              },
+            },
+          },
+        },
+      });
+    }
     if (new URL(request.url()).pathname === "/_p/api/getPastOrdersV1") {
       expect(request.method()).toBe("POST");
       expect(request.headers()["x-csrf-token"]).toBe("x");
@@ -245,5 +285,125 @@ test("affiche explicitement un historique vide sans pagination", async () => {
     "Aucune commande passée dans votre historique Uber Eats.",
   );
   await expect(page.getByRole("button", { name: "Charger plus de commandes" })).toBeHidden();
+  await page.close();
+});
+
+test("affiche les notes publiques et personnelles, puis envoie et relit la note choisie", async () => {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  let savedRating;
+  let submission;
+  let acknowledge;
+  const acknowledged = new Promise((resolve) => {
+    acknowledge = resolve;
+  });
+  await page.route("**/_p/api/getPastOrdersV1?*", (route) => {
+    const response = apiResponse(apiOrders, true);
+    if (savedRating) response.data.ordersMap["order-3"].ratingInfo.userRatings = [savedRating];
+    return route.fulfill({ json: response });
+  });
+  await page.route("**/_p/api/submitRatingV1?*", async (route) => {
+    submission = route.request().postDataJSON();
+    await acknowledged;
+    savedRating = submission.ratingItems[0];
+    await route.fulfill({ json: { status: "success", data: {} } });
+  });
+  await page.goto("https://www.ubereats.com/ca-fr/feed");
+  await page.getByRole("button", { name: "Mes restaurants", exact: true }).click();
+  await expect(page.locator(".public-rating").first()).toContainText("4,6 / 5 · 1200 avis");
+  await expect(page.locator(".public-rating").last()).toContainText("4,2 / 5 · 23 avis");
+  await page.locator(".restaurant-name").filter({ hasText: "Maison Bangkok" }).click();
+  await expect(page.locator("details[open] .personal-rating")).toHaveCount(0);
+  await page.screenshot({ path: ".codex/panel-rating-ineligible.png" });
+  await page.locator(".restaurant-name").filter({ hasText: "Maison Bangkok" }).click();
+  await page.locator(".restaurant-name").filter({ hasText: "La Cantine" }).click();
+  const latest = page.locator("details[open] .personal-rating").first();
+  const previous = page.locator("details[open] .personal-rating").last();
+  await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
+  await expect(previous.locator("button")).toHaveText(["★", "★", "★", "★", "☆"]);
+  await expect(previous.getByRole("button", { name: "Mettre 5 étoiles" })).toBeDisabled();
+  await expect(previous.locator(".rating-help")).toHaveCount(0);
+  expect(submission).toBeUndefined();
+  await latest.getByRole("button", { name: "Mettre 4 étoiles" }).click();
+  await expect(latest.getByText("Envoi de votre note à Uber Eats…")).toBeVisible();
+  await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
+  await expect.poll(() => submission).not.toBeUndefined();
+  expect(submission).toEqual({
+    workflowUUID: "order-3",
+    entryPoint: "order_page",
+    ratingItems: [
+      {
+        uuid: "00000000-0000-0000-0000-000000000001",
+        value: "FOUR_STAR",
+        schema: "FIVE_STARS",
+        subjectType: "STORE",
+      },
+    ],
+  });
+  acknowledge();
+  await expect(latest.getByText("Note envoyée à Uber Eats.")).toBeVisible();
+  await expect(latest.locator("button")).toHaveText(["★", "★", "★", "★", "☆"]);
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.screenshot({ path: ".codex/panel-ratings-desktop.png" });
+  await page.setViewportSize({ width: 390, height: 1000 });
+  await page.screenshot({ path: ".codex/panel-ratings-mobile.png" });
+  await page.getByRole("button", { name: "Actualiser les commandes" }).click();
+  await expect(page.locator(".restaurant-name").first()).toBeVisible();
+  await page.locator(".restaurant-name").first().click();
+  await expect(page.locator("details[open] .personal-rating").first().locator("button")).toHaveText(
+    ["★", "★", "★", "★", "☆"],
+  );
+  await page.close();
+});
+
+test("un échec d’envoi ne remplace pas la note affichée", async () => {
+  const page = await context.newPage();
+  await page.route("**/_p/api/submitRatingV1?*", (route) =>
+    route.fulfill({ status: 500, json: { status: "failure" } }),
+  );
+  await page.goto("https://www.ubereats.com/ca-fr/orders");
+  await page.locator(".restaurant-name").first().click();
+  const latest = page.locator("details[open] .personal-rating").first();
+  await latest.getByRole("button", { name: "Mettre 5 étoiles" }).click();
+  await expect(latest.locator(".rating-message")).toContainText("ne peut pas traiter la demande");
+  await expect(latest.locator("button")).toHaveText(["☆", "☆", "☆", "☆", "☆"]);
+  await expect(latest.getByRole("button", { name: "Mettre 5 étoiles" })).toBeEnabled();
+  await page.close();
+});
+
+test("n’envoie aucune note si la commande est inéligible ou si le formulaire ne correspond pas", async () => {
+  const page = await context.newPage();
+  const submissions = [];
+  page.on("request", (request) => {
+    if (request.url().includes("/submitRatingV1")) submissions.push(request);
+  });
+  let ineligible = false;
+  await page.route("**/_p/api/getPendingRatingV1?*", (route) =>
+    route.fulfill({
+      json: {
+        status: "success",
+        data: !ineligible
+          ? {
+              workflowUUID: "another-order",
+              ratingInputPagesOrder: { storeRatingPage: "store" },
+              ratingInputPagesMap: {
+                store: { type: "STORE_RATING", uuid: "another-store", identifiers: ["ONE_STAR"] },
+              },
+            }
+          : null,
+      },
+    }),
+  );
+  await page.goto("https://www.ubereats.com/ca-fr/orders");
+  await page.locator(".restaurant-name").first().click();
+  const latest = page.locator("details[open] .personal-rating").first();
+  await latest.getByRole("button", { name: "Mettre 1 étoile", exact: true }).click();
+  await expect(latest.locator(".rating-message")).toContainText("formulaire de cette commande");
+  ineligible = true;
+  await latest.getByRole("button", { name: "Mettre 1 étoile", exact: true }).click();
+  await expect(
+    page.locator("details[open] .order").first().locator(".personal-rating"),
+  ).toHaveCount(0);
+  expect(submissions).toHaveLength(0);
   await page.close();
 });

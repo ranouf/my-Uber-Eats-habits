@@ -1,6 +1,6 @@
 {
   "name": "uber-eat-habits",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "type": "module",
   "description": "Extension Chrome pour retrouver les restaurants et les dernières commandes Uber Eats.",
@@ -13,7 +13,7 @@
     "version:check": "node scripts/check-version.mjs",
     "chrome-store:dry-run": "node scripts/check-chrome-store-credentials.mjs",
     "chrome-store:oauth-check": "node scripts/check-chrome-store-credentials.mjs --oauth-only",
-    "check": "node --check scripts/check-chrome-store-credentials.mjs && node --check src/orders.js && node --check src/ui.js && node --check src/content.js && node scripts/check-extension.mjs && npm run typecheck",
+    "check": "node --check scripts/check-chrome-store-credentials.mjs && node --check src/orders.js && node --check src/ratings.js && node --check src/ui.js && node --check src/content.js && node scripts/check-extension.mjs && npm run typecheck",
     "typecheck": "tsc --project tsconfig.json",
     "format": "prettier --write . --ignore-path .gitignore",
     "format:check": "prettier --check . --ignore-path .gitignore",

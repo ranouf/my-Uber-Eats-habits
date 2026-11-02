@@ -14,6 +14,12 @@ La source et la pagination vérifiées sont décrites dans [l'analyse API](UBER_
 
 Le service TypeScript autonome [src/api-services.ts](src/api-services.ts) regroupe 109 opérations repérées dans les ressources du site. Le [catalogue sourcé](UBER_EATS_API_CATALOG.md) précise les contrats vérifiés, les références non exécutées et les exemples d'utilisation. Le panneau continue d'utiliser son lecteur JavaScript ; ce service est disponible pour les développements TypeScript.
 
+## Notes des restaurants
+
+La note moyenne des clients et le nombre d'avis apparaissent sous le nom du restaurant. Ouvrir ses commandes pour consulter **Votre note** : cinq étoiles vides pour une commande sans note, ou les étoiles de l'évaluation déjà reçue d'Uber Eats. Un clic sur une étoile envoie la note choisie à Uber Eats pour cette commande ; le message de succès et les étoiles enregistrées apparaissent après acceptation du serveur. Un échec conserve la note précédente et permet de réessayer.
+
+Pour une commande qu'Uber Eats ne permet plus de noter, aucune section de notation n'est affichée sauf si une note existe déjà : celle-ci reste visible en lecture seule. Si une note n'est pas disponible dans la réponse d'une commande encore éligible, le panneau le signale sans inventer de valeur. Le formulaire est relu au clic pour vérifier la commande, le restaurant et les valeurs proposées. Aucun pourboire ni avis sur le livreur n'est inclus dans cet envoi. Les notes sont conservées par Uber Eats, sans stockage local dans l'extension.
+
 ## Versionnement
 
 La version installée est affichée sur le bouton **Mes restaurants** et dans l'en-tête du panneau, à partir du manifeste Chrome.

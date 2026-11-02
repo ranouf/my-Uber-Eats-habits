@@ -13,7 +13,7 @@ function link(text, url) {
   return node;
 }
 
-function renderOrder(order) {
+function renderOrder(order, onRate) {
   const node = element("li", "order");
   const header = element("div", "order-header");
   header.append(
@@ -21,13 +21,44 @@ function renderOrder(order) {
     link("Voir le reçu ↗", order.receiptUrl),
   );
   node.append(header, element("p", "order-total", order.total));
+  if (order.canRate || order.personalRating > 0) {
+    const rating = element("div", "personal-rating");
+    rating.append(element("p", "rating-label", "Votre note"));
+    const stars = element("div", "rating-stars");
+    stars.setAttribute("role", "group");
+    stars.dataset.orderId = order.id;
+    stars.setAttribute("aria-label", `Votre note pour la commande du ${order.date}`);
+    for (let value = 1; value <= 5; value++) {
+      const button = element("button", "rating-star", order.personalRating >= value ? "★" : "☆");
+      button.type = "button";
+      button.dataset.value = String(value);
+      button.setAttribute("aria-label", `Mettre ${value} étoile${value > 1 ? "s" : ""}`);
+      button.setAttribute("aria-pressed", String(order.personalRating === value));
+      button.disabled = !order.canRate || Boolean(order.ratingBusy);
+      button.addEventListener("click", () => onRate(order, value));
+      stars.append(button);
+    }
+    rating.append(stars);
+    if (order.canRate) {
+      rating.append(
+        element("p", "rating-help", "Un clic envoie votre note à Uber Eats pour cette commande."),
+      );
+    }
+    if (order.personalRating === null) {
+      rating.append(element("p", "rating-help", "Votre note existante n’est pas disponible."));
+    }
+    const ratingStatus = element("p", "rating-message", order.ratingMessage);
+    ratingStatus.setAttribute("aria-live", "polite");
+    rating.append(ratingStatus);
+    node.append(rating);
+  }
   const items = element("ul", "items");
   for (const item of order.items) items.append(element("li", "", item));
   node.append(items);
   return node;
 }
 
-export function renderRestaurants(results, restaurants, query) {
+export function renderRestaurants(results, restaurants, query, onRate) {
   const openIds = new Set(
     [...results.querySelectorAll("details[open]")].map((card) => card.dataset.id),
   );
@@ -44,12 +75,21 @@ export function renderRestaurants(results, restaurants, query) {
     label.append(
       element("strong", "restaurant-name", restaurant.name),
       element("span", "last-order", restaurant.orders[0].date),
+      element(
+        "span",
+        "public-rating",
+        restaurant.publicRating?.ratingValue != null
+          ? `Clients : ★ ${restaurant.publicRating.ratingValue.toLocaleString("fr-CA", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} / 5 · ${restaurant.publicRating.reviewCount} avis`
+          : restaurant.ratingLoaded
+            ? "Note des clients indisponible"
+            : "Chargement de la note des clients…",
+      ),
     );
     summary.append(label, element("span", "count", String(restaurant.orders.length)));
     const content = element("div", "restaurant-content");
     content.append(link("Voir le restaurant ↗", restaurant.url));
     const orders = element("ol", "orders");
-    for (const order of restaurant.orders) orders.append(renderOrder(order));
+    for (const order of restaurant.orders) orders.append(renderOrder(order, onRate));
     content.append(orders);
     card.append(summary, content);
     results.append(card);
@@ -89,7 +129,7 @@ export function createPanel() {
         <p class="notice">Du plus récent au plus ancien. L’historique est lu directement depuis votre compte Uber Eats. Chargez plus de commandes pour remonter dans le temps.</p>
         <p class="notice">Ouvrez le reçu pour consulter les détails et les personnalisations des articles.</p>
       </div>
-      <footer>Lecture de votre historique Uber Eats · Aucun stockage persistant</footer>
+      <footer>Historique et notes Uber Eats · Aucun stockage local</footer>
     </aside>`;
   shadow.append(content);
   document.body.append(host);

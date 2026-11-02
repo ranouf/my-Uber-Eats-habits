@@ -14,6 +14,34 @@ export interface PastOrderItem {
   quantity: number;
   title: string;
 }
+export type StoreRatingValue = "ONE_STAR" | "TWO_STAR" | "THREE_STAR" | "FOUR_STAR" | "FIVE_STAR";
+export interface StorePublicRating {
+  ratingValue: number;
+  reviewCount: number | string;
+}
+export interface StoreRatingItem {
+  uuid: string;
+  value: StoreRatingValue;
+  schema: "FIVE_STARS";
+  subjectType: "STORE";
+}
+export interface StoreRatingRequest {
+  workflowUUID: string;
+  entryPoint: string;
+  ratingItems: StoreRatingItem[];
+}
+export interface PendingRatingRequest {
+  orderUuid: string;
+  entryPoint: string;
+}
+export interface PendingRatingData {
+  workflowUUID: string;
+  ratingInputPagesOrder: { storeRatingPage?: string };
+  ratingInputPagesMap: Record<
+    string,
+    { type: string; uuid?: string; identifiers?: StoreRatingValue[] }
+  >;
+}
 export interface PastOrder {
   baseEaterOrder: {
     uuid: string;
@@ -23,7 +51,8 @@ export interface PastOrder {
     currencyCode: string;
     shoppingCart: { items: PastOrderItem[] };
   };
-  storeInfo: { uuid: string; title: string; slug: string };
+  storeInfo: { uuid: string; title: string; slug: string; rating: StorePublicRating | null };
+  ratingInfo: { isRatable: boolean; userRatings: unknown[] };
   fareInfo: { totalPrice: number; checkoutInfo: { key: string; formattedValue: string }[] };
 }
 export interface PastOrdersData {
@@ -697,11 +726,11 @@ export class UberEatsApiService {
     return this.request<PastOrdersData>("getPastOrdersV1", request, signal);
   }
 
-  getPendingRatingV1<TResponse = unknown>(
-    request: ApiRequestBody,
+  getPendingRatingV1(
+    request: PendingRatingRequest,
     signal?: AbortSignal,
-  ): Promise<TResponse> {
-    return this.request<TResponse>("getPendingRatingV1", request, signal);
+  ): Promise<PendingRatingData | null> {
+    return this.request<PendingRatingData | null>("getPendingRatingV1", request, signal);
   }
 
   getProfilesForUserV1<TResponse = unknown>(
@@ -939,7 +968,7 @@ export class UberEatsApiService {
 
   /** Mutation ou événement : exécution uniquement sur appel explicite. */
   submitRatingV1<TResponse = unknown>(
-    request: ApiRequestBody,
+    request: StoreRatingRequest,
     signal?: AbortSignal,
   ): Promise<TResponse> {
     return this.request<TResponse>("submitRatingV1", request, signal);

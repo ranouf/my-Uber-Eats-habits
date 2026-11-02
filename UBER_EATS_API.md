@@ -40,7 +40,20 @@ Le lien du restaurant reprend le slug et l'UUID encodé en base64url, comme les 
 
 `getActiveOrdersV1` renvoie les commandes en cours et leur suivi. Il n'est pas utilisé pour construire l'historique des commandes passées. Les appels de brouillons, factures et télémétrie ne sont pas nécessaires au panneau.
 
-## Limites
+## Notes publiques et personnelles
+
+Les ressources publiques du site ont été examinées le 1 novembre 2026 sans reprendre l'observation du navigateur personnel :
+
+- [Formulaire de notation](https://www.ubereats.com/_static/client-42362-5d0b6c22d697a175.js) : `getPendingRatingV1` reçoit `{ orderUuid, entryPoint }`. Le formulaire désigne sa page restaurant par `ratingInputPagesOrder.storeRatingPage`, puis `ratingInputPagesMap[id]` fournit `type: "STORE_RATING"`, `uuid` et `identifiers`.
+- Le même composant construit `submitRatingV1` avec `workflowUUID`, `entryPoint` et `ratingItems`. Une étoile restaurant utilise `{ uuid, value, schema: "FIVE_STARS", subjectType: "STORE" }`, avec les identifiants `ONE_STAR` à `FIVE_STAR`. L'extension envoie uniquement cet élément, sans champ de pourboire, commentaire ou note de livreur.
+- [Historique officiel](https://www.ubereats.com/_static/client-40870-1693fb432b9ab521.js) : le site conditionne l'accès au formulaire à `ratingInfo.isRatable`. L'extension respecte cet indicateur et relit le formulaire avant chaque envoi. La réponse doit correspondre à la commande et au restaurant affichés.
+- [Affichage des avis](https://www.ubereats.com/_static/client-25083-47b08f0eaea84644.js) : la moyenne publique utilise `rating.ratingValue` et le nombre d'avis `rating.reviewCount`. Le panneau lit ces données dans `storeInfo.rating`, ou via `getStoreV1` avec `storeUuid` lorsque l'historique ne les fournit pas.
+
+Pour la note personnelle, le lecteur reconnaît les éléments `FIVE_STARS`/`STORE` de `ratingInfo.userRatings` correspondant à l'UUID du restaurant. Un tableau vide signifie qu'aucune note n'a été fournie ; un format non reconnu est affiché comme indisponible. Cette lecture n'est pas une garantie que toutes les variantes de réponse interne sont documentées : les tests utilisent des exemples fictifs, et aucun avis réel n'a été envoyé pour valider cette fonctionnalité.
+
+L'[aide Uber Eats](https://help.uber.com/fr-FR/ubereats/stores/article/i-had-an-issue-with-my-delivery-person-?nodeId=80c0a22a-2781-499c-84f1-fb0e8efb71f8) rattache l'évaluation à une commande livrée. Les règles d'éligibilité restent imposées par Uber Eats ; l'extension ne force pas la modification d'une ancienne note refusée par le site.
+
+## Limites et validation
 
 La documentation officielle [Consumer Delivery APIs](https://developer.uber.com/docs/consumer-delivery/introduction) mentionne l'historique, mais les spécifications détaillées sont proposées sur accès accordé par Uber. Le contrat décrit ici provient des appels du site, pas d'une API publique garantie pour les extensions.
 

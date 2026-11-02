@@ -210,6 +210,44 @@ input {
   color: #545454;
   font-size: 12px;
 }
+.public-rating {
+  font-size: 12px;
+  color: #545454;
+}
+.personal-rating {
+  margin: 12px 0;
+}
+.rating-label {
+  font-size: 12px;
+  font-weight: 600;
+}
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  margin: 4px 0;
+}
+.rating-star {
+  width: 40px;
+  min-height: 40px;
+  padding: 0;
+  background: transparent;
+  border-radius: 50%;
+  font-size: 28px;
+}
+.rating-star:hover:not(:disabled) {
+  background: #e8e8e8;
+}
+.rating-star:disabled {
+  cursor: default;
+}
+.rating-help,
+.rating-message {
+  font-size: 11px;
+  color: #545454;
+}
+.rating-message:not(:empty) {
+  margin-top: 6px;
+}
 .count {
   display: grid;
   place-items: center;

@@ -1,5 +1,8 @@
 (async () => {
   const { groupRestaurants, loadOrderPage } = await import(chrome.runtime.getURL("src/orders.js"));
+  const { RatingUnavailableError, loadPublicRating, submitRestaurantRating } = await import(
+    chrome.runtime.getURL("src/ratings.js")
+  );
   const { createPanel, renderRestaurants } = await import(chrome.runtime.getURL("src/ui.js"));
   const { shadow } = createPanel();
   const launcher = shadow.querySelector(".launcher");
@@ -17,9 +20,57 @@
   let loaded = false;
   let loading = false;
   let previousPath;
+  const publicRatings = new Map();
 
   function render() {
-    renderRestaurants(results, restaurants, search.value);
+    renderRestaurants(results, restaurants, search.value, rateOrder);
+  }
+
+  async function rateOrder(order, stars) {
+    order.ratingBusy = true;
+    order.ratingMessage = "Envoi de votre note à Uber Eats…";
+    render();
+    try {
+      await submitRestaurantRating(order, stars);
+      order.personalRating = stars;
+      order.ratingMessage = "Note envoyée à Uber Eats.";
+    } catch (error) {
+      if (error instanceof RatingUnavailableError) {
+        order.canRate = false;
+        order.ratingMessage = "";
+      } else {
+        order.ratingMessage =
+          error instanceof TypeError || error instanceof SyntaxError
+            ? "Impossible d’envoyer la note. Réessayez."
+            : error.message;
+      }
+    } finally {
+      order.ratingBusy = false;
+      render();
+      if (!panel.hidden) {
+        results
+          .querySelector(`[data-order-id="${CSS.escape(order.id)}"] [data-value="${stars}"]`)
+          ?.focus({ preventScroll: true });
+      }
+    }
+  }
+
+  async function loadPublicRatings() {
+    await Promise.all(
+      restaurants.map(async (restaurant) => {
+        if (restaurant.publicRating?.ratingValue != null) return;
+        try {
+          if (!publicRatings.has(restaurant.id)) {
+            publicRatings.set(restaurant.id, loadPublicRating(restaurant.id));
+          }
+          restaurant.publicRating = await publicRatings.get(restaurant.id);
+        } catch {
+          restaurant.publicRating = null;
+        }
+        restaurant.ratingLoaded = true;
+      }),
+    );
+    render();
   }
 
   async function load(reset = false) {
@@ -33,6 +84,7 @@
       restaurants = [];
       cursor = "";
       loaded = false;
+      publicRatings.clear();
       more.hidden = true;
       search.hidden = true;
       render();
@@ -50,6 +102,7 @@
         ? `${restaurants.length} restaurants · ${restaurants.reduce((sum, restaurant) => sum + restaurant.orders.length, 0)} commandes chargées`
         : "Aucune commande passée dans votre historique Uber Eats.";
       render();
+      void loadPublicRatings();
     } catch (error) {
       status.textContent =
         error instanceof SyntaxError || error instanceof TypeError
